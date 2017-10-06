@@ -111,7 +111,7 @@
 (defvar pocket-reader-items nil
   "Items to be shown.
 This is stored in a var so we can fetch the items and calculate
-settings for tabulated-list-mode based on it.  NOTE: This may
+settings for ‘tabulated-list-mode’ based on it.  NOTE: This may
 become out-of-sync with `tabulated-list-entries', so it should
 not be used outside of functions that already use it.")
 
@@ -208,7 +208,7 @@ REGEXP REGEXP ...)."
 ;;;; Macros
 
 (defmacro pocket-reader--with-pocket-reader-buffer (&rest body)
-  "Run BODY in pocket-reader buffer and read-only inhibited."
+  "Run BODY in ‘pocket-reader’ buffer and read-only inhibited."
   (declare (indent defun))
   `(with-current-buffer "*pocket-reader*"
      (let ((inhibit-read-only t))
@@ -285,6 +285,7 @@ alist, get the `item-id' from it."
 ;;;;; Commands
 
 (defun pocket-reader ()
+  "Show Pocket reading list."
   (interactive)
   (switch-to-buffer (get-buffer-create "*pocket-reader*"))
   (pocket-reader-mode))
@@ -411,7 +412,7 @@ alist, get the `item-id' from it."
 ;;;;;; Tags
 
 (defun pocket-reader-add-tags (tags)
-  "Add tags to current item."
+  "Add TAGS to current item."
   (interactive (list (read-from-minibuffer "Tags: ")))
   (let* ((new-tags (s-split (rx (or space ",")) tags 'omit-nulls))
          (new-tags-string (s-join "," new-tags)))
@@ -422,18 +423,18 @@ alist, get the `item-id' from it."
       (pocket-reader--at-marked-or-current-items
         (pocket-reader--add-tags new-tags)))))
 
-(defun pocket-reader-remove-tags (remove-tags)
-  "Remove tags from current item."
+(defun pocket-reader-remove-tags (tags)
+  "Remove TAGS from current item."
   ;; FIXME: Get all tags with a function.
   (interactive (list (completing-read "Tags: " (pocket-reader--get-property :tags))))
-  (let* ((remove-tags (s-split (rx (or space ",")) remove-tags 'omit-nulls))
-         (remove-tags-string (s-join "," remove-tags)))
+  (let* ((tags (s-split (rx (or space ",")) tags 'omit-nulls))
+         (remove-tags-string (s-join "," tags)))
     (when (and remove-tags-string
                (apply #'pocket-lib--tags-action 'tags_remove remove-tags-string
                       (pocket-reader--marked-or-current-items)))
       ;; Tags removed successfully
       (pocket-reader--at-marked-or-current-items
-        (pocket-reader--remove-tags remove-tags)))))
+        (pocket-reader--remove-tags tags)))))
 
 (defun pocket-reader-set-tags (tags)
   "Set TAGS of current item."
@@ -448,7 +449,7 @@ alist, get the `item-id' from it."
 
 ;;;;;; URL-opening
 
-(defun pocket-reader-open-url (&optional &key fn)
+(cl-defun pocket-reader-open-url (&optional &key fn)
   "Open URL of current item with default function."
   (interactive)
   (pocket-reader--at-marked-or-current-items
@@ -466,6 +467,8 @@ alist, get the `item-id' from it."
   (pocket-reader-open-url :fn #'pocket-reader-pop-to-url-default-function))
 
 (defun pocket-reader-open-in-external-browser ()
+  "Open marked or current items in external browser.
+The `browse-url-default-browser' function is used."
   (interactive)
   (pocket-reader-open-url
    :fn (lambda (&rest args)
@@ -762,7 +765,7 @@ the date changes."
   (string= "1" (pocket-reader--get-property :favorite)))
 
 (defun pocket-reader--update-favorite-display (is-favorite)
-  "Update favorite star for current item."
+  "Update favorite star for current item, depending on value of IS-FAVORITE."
   (tabulated-list-set-col 1 (if is-favorite "*" "") t)
   (pocket-reader--apply-faces-to-line))
 
@@ -853,6 +856,7 @@ Gets tags from text property."
 ;;;;;; Faces
 
 (defun pocket-reader--apply-faces ()
+  "Apply faces to buffer."
   ;; TODO: Maybe we should use a custom print function but this is simpler
   (pocket-reader--with-pocket-reader-buffer
     (goto-char (point-min))
