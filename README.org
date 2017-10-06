@@ -1,0 +1,111 @@
+#+PROPERTY: LOGGING nil
+
+#+BEGIN_HTML
+<a href=https://alphapapa.github.io/dont-tread-on-emacs/><img src="dont-tread-on-emacs-150.png" align="right"></a>
+#+END_HTML
+
+* pocket-reader
+
+[[https://melpa.org/#/helm-org-rifle][file:https://melpa.org/packages/pocket-reader-badge.svg]] [[https://stable.melpa.org/#/helm-org-rifle][file:https://stable.melpa.org/packages/pocket-reader-badge.svg]]
+
+This is a client for Pocket (getpocket.com).  It allows you to manage your reading list: add, remove, delete, tag, view, favorite, etc.  Doing so in Emacs with the keyboard is fast and efficient.  Links can be opened in Emacs with any function, or in external browsers, and specific sites/URLs can be opened with specific browser functions.  Views can be sorted by date, title, domain, tags, favorite, etc, and "limited" mutt-style.  Items can be searched for using keywords, tags, favorite status, unread/archived status, etc.  Items can optionally be colorized by site, making it easy to tell which items come from different sites.  Items are grouped depending on the sort column.
+
+** Contents           
+:PROPERTIES:
+:TOC:      this
+:END:
+    -  [[#screenshots][Screenshots]]
+    -  [[#installation][Installation]]
+    -  [[#usage][Usage]]
+    -  [[#changelog][Changelog]]
+    -  [[#development][Development]]
+    -  [[#license][License]]
+** Screenshots
+ 
+Marked items are displayed with inverse colors.
+
+Sorted by date-added, with both title and site colorized:
+
+[[screenshots/by-date-colorized.png]]
+
+Sorted by site, with only the site colorized:
+
+[[screenshots/by-site-only-site-colorized.png]]
+
+Sorted by favorite status, not colorized:
+
+[[screenshots/by-favorite-not-colorized.png]]
+                   
+** Installation
+:PROPERTIES:
+:TOC:      ignore-children
+:END:
+
+*** MELPA
+
+If you installed from MELPA, just run the =pocket-reader= command.
+
+*** Manual
+
+Install the required packages listed in =pocket-reader.el=.  Then put this in your init file and run the =pocket-reader= command:
+
+#+BEGIN_SRC elisp
+(require 'pocket-reader)
+#+END_SRC
+
+** Usage    
+:PROPERTIES:
+:TOC:      ignore-children
+:END:
+
+*** Keys
+
+These keys can be used in the pocket-reader buffer:
+
+-  =RET=: Open item with default browse function.
+-  =TAB=: Open item with default pop-to function.
+-  =b=: Open item with external browser function.
+-  =a=: Toggle item's archived/unread status.
+-  =c=: Copy item's URL to the kill ring.
+-  =D=: Delete item.
+-  =e=: Show excerpt for item.
+-  =E=: Show excerpt for all items.
+-  =*=, =f=: Toggle favorite status of marked items or current items.
+-  =F=: Search for unread, favorite items.
+-  =s=: Search for items (or display all items if no query is entered).
+-  =m=: Mark current item.
+-  =M=: Mark all items.
+-  =U=: Unmark all items.
+-  =o=: Show more items (using the current count limit).
+-  =l=: Limit current view to items matching string (this does not run a new search).
+-  =tt=, =ta=: Add tags to marked items or current items.
+-  =tr=: Remove tags from marked items or current items.
+-  =ts=: Set tags of marked items or current items.
+
+*** Searching
+
+These special keywords can be used when searching:
+
+-  =:*=, =:favorite=  Return only favorited items.
+-  =:archive=  Return only archived items.
+-  =:unread=  Return only unread items (default).
+-  =:all=  Return all items.
+-  =:COUNT=  Return at most /COUNT/ (a number) items.
+-  =:t:TAG=  Return items with /TAG/ (only one tag may be searched for, a limitation of the Pocket API).
+
+** Changelog
+:PROPERTIES:
+:TOC:      ignore-children
+:END:
+
+*** 0.1-pre
+
+Initial release.
+
+** Development
+
+Bug reports, feature requests, suggestions — /oh my/!
+
+** License
+
+GPLv3
