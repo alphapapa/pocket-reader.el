@@ -60,27 +60,27 @@ Install the required packages listed in =pocket-reader.el=.  Then put this in yo
 
 *** Keys
 
-These keys can be used in the pocket-reader buffer:
+Commands operate on the current item or marked items.  These keys can be used in the pocket-reader buffer:
 
--  =RET=: Open item with default browse function.
--  =TAB=: Open item with default pop-to function.
--  =b=: Open item with external browser function.
--  =a=: Toggle item's archived/unread status.
--  =c=: Copy item's URL to the kill ring.
+-  =RET=: Open with default browse function.
+-  =TAB=: Open with default pop-to function.
+-  =b=: Open with external browser function.
+-  =a=: Toggle archived/unread status.
+-  =c=: Copy URL to the kill ring.
 -  =D=: Delete item.
--  =e=: Show excerpt for item.
+-  =e=: Show excerpt.
 -  =E=: Show excerpt for all items.
--  =*=, =f=: Toggle favorite status of marked items or current items.
--  =F=: Search for unread, favorite items.
--  =s=: Search for items (or display all items if no query is entered).
--  =m=: Mark current item.
+-  =*=, =f=: Toggle favorite status.
+-  =F=: Show unread, favorite items.
+-  =s=: Search for items (or display default view if no query is entered).
+-  =m=: Toggle mark of current item.
 -  =M=: Mark all items.
 -  =U=: Unmark all items.
 -  =o=: Show more items (using the current count limit).
 -  =l=: Limit current view to items matching string (this does not run a new search).
--  =tt=, =ta=: Add tags to marked items or current items.
--  =tr=: Remove tags from marked items or current items.
--  =ts=: Set tags of marked items or current items.
+-  =tt=, =ta=: Add tags.
+-  =tr=: Remove tags.
+-  =ts=: Set tags.
 
 *** Searching
 
@@ -90,7 +90,7 @@ These special keywords can be used when searching:
 -  =:archive=  Return only archived items.
 -  =:unread=  Return only unread items (default).
 -  =:all=  Return all items.
--  =:COUNT=  Return at most /COUNT/ (a number) items.
+-  =:COUNT=  Return at most /COUNT/ (a number) items.  This limit persists until a new search is run.
 -  =:t:TAG=  Return items with /TAG/ (only one tag may be searched for, a limitation of the Pocket API).
 
 ** Changelog
