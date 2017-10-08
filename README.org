@@ -6,7 +6,7 @@
 
 * pocket-reader
 
-[[https://melpa.org/#/helm-org-rifle][file:https://melpa.org/packages/pocket-reader-badge.svg]] [[https://stable.melpa.org/#/helm-org-rifle][file:https://stable.melpa.org/packages/pocket-reader-badge.svg]]
+[[https://melpa.org/#/pocket-reader][file:https://melpa.org/packages/pocket-reader-badge.svg]] [[https://stable.melpa.org/#/pocket-reader][file:https://stable.melpa.org/packages/pocket-reader-badge.svg]]
 
 This is a client for Pocket (getpocket.com).  It allows you to manage your reading list: add, remove, delete, tag, view, favorite, etc.  Doing so in Emacs with the keyboard is fast and efficient.  Links can be opened in Emacs with any function, or in external browsers, and specific sites/URLs can be opened with specific browser functions.  Views can be sorted by date, title, domain, tags, favorite, etc, and "limited" mutt-style.  Items can be searched for using keywords, tags, favorite status, unread/archived status, etc.  Items can optionally be colorized by site, making it easy to tell which items come from different sites.  Items are grouped depending on the sort column.
 
