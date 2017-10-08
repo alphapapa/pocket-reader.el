@@ -427,7 +427,7 @@ other special keywords."
 
 (defun pocket-reader-add-tags (tags)
   "Add TAGS to current item."
-  (interactive (list (read-from-minibuffer "Tags: ")))
+  (interactive (list (completing-read "Tags: " (pocket-reader--all-tags))))
   (let* ((new-tags (s-split (rx (or space ",")) tags 'omit-nulls))
          (new-tags-string (s-join "," new-tags)))
     (when (and new-tags-string
@@ -440,7 +440,10 @@ other special keywords."
 (defun pocket-reader-remove-tags (tags)
   "Remove TAGS from current item."
   ;; FIXME: Get all tags with a function.
-  (interactive (list (completing-read "Tags: " (pocket-reader--get-property :tags))))
+  (interactive (list (completing-read "Tags: " (let (tags)
+                                                 (pocket-reader--at-marked-or-current-items
+                                                   (setq tags (append (pocket-reader--get-property :tags) tags)))
+                                                 (-sort #'string< (-uniq tags))))))
   (let* ((tags (s-split (rx (or space ",")) tags 'omit-nulls))
          (remove-tags-string (s-join "," tags)))
     (when (and remove-tags-string
@@ -452,7 +455,7 @@ other special keywords."
 
 (defun pocket-reader-set-tags (tags)
   "Set TAGS of current item."
-  (interactive (list (read-from-minibuffer "Tags: ")))
+  (interactive (list (completing-read "Tags: " (pocket-reader--all-tags))))
   (pocket-reader--with-pocket-reader-buffer
     (let* ((tags (s-split (rx (or space ",")) tags 'omit-nulls))
            (tags-string (s-join "," tags)))
@@ -787,6 +790,18 @@ the date changes."
   (pocket-reader--apply-faces-to-line))
 
 ;;;;;; Tags
+
+(defun pocket-reader--all-tags ()
+  "Return list of all tags in the current list."
+  (pocket-reader--with-pocket-reader-buffer
+    (save-excursion
+      (goto-char (point-min))
+      (cl-loop while (not (eobp))
+               for tags = (pocket-reader--get-property :tags)
+               when tags
+               append tags into list
+               do (forward-line 1)
+               finally return (-sort #'string< (-uniq list))))))
 
 (defun pocket-reader--add-tags (tags)
   "Add TAGS to current item.
