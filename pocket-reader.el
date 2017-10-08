@@ -203,7 +203,7 @@ REGEXP REGEXP ...)."
 (defface pocket-reader-marked `((default :inverse-video t)) "Face for marked items")
 (defface pocket-reader-unread `((default :weight bold)) "Face for unread items")
 (defface pocket-reader-archived `((default :weight normal)) "Face for archived items")
-(defface pocket-reader-favorite-star `((default :foreground "#b58900")) "Face for archived items")
+(defface pocket-reader-favorite-star `((default :foreground "#b58900")) "Face for favorite items")
 
 ;;;; Macros
 
