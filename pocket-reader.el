@@ -321,6 +321,7 @@ alist, get the `item-id' from it."
 
 (defun pocket-reader-limit (query)
   "Limit display to items matching QUERY."
+  ;; MAYBE: Search hidden properties so e.g. the URL can be matched against.
   (interactive (list (read-from-minibuffer "Query: ")))
   (if (s-present? query)
       (save-excursion
