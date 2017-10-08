@@ -1,8 +1,8 @@
 ;;; pocket-reader.el --- Client for Pocket reading list -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2004-2017 Free Software Foundation, Inc.
+;; Copyright (C) 2017 Free Software Foundation, Inc.
 
-;; Author: Adam Porter <adam@alphapapa.net
+;; Author: Adam Porter <adam@alphapapa.net>
 ;; Created: 2017-09-25
 ;; Version: 0.1-pre
 ;; Keywords: pocket
