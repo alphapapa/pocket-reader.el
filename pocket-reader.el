@@ -704,6 +704,7 @@ Common prefixes like www are removed."
   "Insert overlay spacers where the current sort column's values change.
 For example, if sorted by date, a spacer will be inserted where
 the date changes."
+  ;; TODO: Don't insert spacers for some columns (e.g. when sorted by title, it's useless)
   (let ((sort-column (seq-position tabulated-list-format tabulated-list-sort-key
                                    (lambda (seq elt)
                                      (string= (car seq) (car elt))))))
