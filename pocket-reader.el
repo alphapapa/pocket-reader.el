@@ -284,6 +284,7 @@ alist, get the `item-id' from it."
 
 ;;;;; Commands
 
+;;;###autoload
 (defun pocket-reader ()
   "Show Pocket reading list."
   (interactive)
