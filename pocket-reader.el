@@ -227,7 +227,7 @@ REGEXP REGEXP ...)."
   `(car (last (cl-loop for string in ,list
                        when (string-match ,regexp string)
                        do (setq ,list (delete string ,list))
-                       and collect (replace-regexp-in-string (rx-to-string '(seq bos ,prefix)) "" string)))))
+                       and collect (replace-regexp-in-string (rx-to-string `(seq bos (regexp ,,prefix))) "" string)))))
 
 (defmacro pocket-reader--at-item (id-or-item &rest body)
   "Eval BODY with point at item ID-OR-ITEM.
@@ -581,7 +581,7 @@ QUERY is a string which may contain certain keywords:
 :unread        Return only unread items (default).
 :all           Return all items.
 :COUNT         Return at most COUNT (a number) items.
-:t:TAG         Return items with TAG (only one tag may be searched for)."
+:t:TAG, t:TAG  Return items with TAG (only one tag may be searched for)."
   ;; This buffer-local variable specifies the entries displayed in the
   ;; Tabulated List buffer.  Its value should be either a list, or a
   ;; function.
@@ -612,7 +612,9 @@ QUERY is a string which may contain certain keywords:
                       (or (--when-let (pocket-reader--regexp-in-list query-words (rx bos ":" (1+ digit) eos))
                             (string-to-number it))
                           pocket-reader-show-count)))
-         (tag (pocket-reader--regexp-in-list query-words (rx bos ":t:" (1+ word) eos) ":t:"))
+         (tag (pocket-reader--regexp-in-list query-words
+                                             (rx bos (optional ":") "t:" (1+ word) eos)
+                                             (rx (optional ":") "t:")))
          (query-string (s-join " " query-words))
          ;; Get items with query
          (items (cdr (cl-third (pocket-lib-get :detail-type "complete" :count count :offset pocket-reader-offset

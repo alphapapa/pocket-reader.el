@@ -92,7 +92,7 @@ These special keywords can be used when searching:
 -  =:unread=  Return only unread items (default).
 -  =:all=  Return all items.
 -  =:COUNT=  Return at most /COUNT/ (a number) items.  This limit persists until a new search is run.
--  =:t:TAG=  Return items with /TAG/ (only one tag may be searched for, a limitation of the Pocket API).
+-  =:t:TAG=, =t:TAG=  Return items with /TAG/ (only one tag may be searched for, a limitation of the Pocket API).
 
 ** Changelog
 :PROPERTIES:
