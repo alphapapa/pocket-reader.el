@@ -482,7 +482,7 @@ other special keywords."
 (defun pocket-reader-pop-to-url ()
   "Open URL of current item with default pop-to function."
   (interactive)
-  (pocket-reader-open-url :fn #'pocket-reader-pop-to-url-default-function))
+  (pocket-reader-open-url :fn pocket-reader-pop-to-url-default-function))
 
 (defun pocket-reader-open-in-external-browser ()
   "Open marked or current items in external browser.
