@@ -78,9 +78,10 @@ Commands operate on the current item or marked items.  These keys can be used in
 -  =U=: Unmark all items.
 -  =o=: Show more items (using the current count limit).
 -  =l=: Limit current view to items matching string (this does not run a new search).
--  =tt=, =ta=: Add tags.
+-  =ta=: Add tags.
 -  =tr=: Remove tags.
--  =ts=: Set tags.
+-  =tt=: Set tags.
+-  =ts=: Search for a tag.
 
 *** Searching
 

@@ -55,10 +55,10 @@
 ;; "U" pocket-reader-unmark-all
 ;; "o" pocket-reader-more
 ;; "l" pocket-reader-limit
-;; "tt" pocket-reader-add-tags
 ;; "ta" pocket-reader-add-tags
 ;; "tr" pocket-reader-remove-tags
-;; "ts" pocket-reader-set-tags
+;; "tt" pocket-reader-set-tags
+;; "ts" pocket-reader-tag-search
 
 ;;; Code:
 
@@ -99,10 +99,10 @@
                     "U" pocket-reader-unmark-all
                     "o" pocket-reader-more
                     "l" pocket-reader-limit
-                    "tt" pocket-reader-add-tags
                     "ta" pocket-reader-add-tags
                     "tr" pocket-reader-remove-tags
-                    "ts" pocket-reader-set-tags
+                    "tt" pocket-reader-set-tags
+                    "ts" pocket-reader-tag-search
                     )))
     (cl-loop for (key fn) on mappings by #'cddr
              do (define-key map (kbd key) fn))
@@ -411,6 +411,19 @@ alist, get the `item-id' from it."
            do (pocket-reader--unmark-item id)))
 
 ;;;;;; Tags
+
+(defun pocket-reader-tag-search (tag)
+  "Search for items with TAG.
+This is a plain, simple tag search, not intended to be used with
+other special keywords."
+  ;; MAYBE: Maybe add support for special keywords, but that might
+  ;; make it more complicated to use than it is worth, because it
+  ;; would mean making every plain word an implied tag keyword.
+  (interactive (list (read-from-minibuffer "Tag: ")))
+  (unless (= 1 (length (s-split (rx (or "," space)) tag)))
+    (user-error "Only one tag may be searched for at a time."))
+  (let ((query (concat ":t:" tag)))
+    (pocket-reader-search query)))
 
 (defun pocket-reader-add-tags (tags)
   "Add TAGS to current item."
