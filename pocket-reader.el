@@ -720,11 +720,12 @@ Common prefixes like www are removed."
   "Format TIMESTAMP."
   (format-time-string "%Y-%m-%d" timestamp))
 
-(defun pocket-reader--add-spacers (&rest ignore)
+(cl-defun pocket-reader--add-spacers (&key (min-group-size 2))
   "Insert overlay spacers where the current sort column's values change.
 For example, if sorted by date, a spacer will be inserted where
-the date changes."
-  ;; TODO: Don't insert spacers for some columns (e.g. when sorted by title, it's useless)
+the date changes.  If no group has at least MIN-GROUP-SIZE items,
+no spacers will be inserted. "
+  ;; TODO: Use column-specific functions so that, e.g. date column could be grouped by month/year
   (let ((sort-column (seq-position tabulated-list-format tabulated-list-sort-key
                                    (lambda (seq elt)
                                      (string= (car seq) (car elt))))))
@@ -732,14 +733,18 @@ the date changes."
     (ov-clear)
     (save-excursion
       (goto-char (point-min))
-      (cl-loop with prev-data = (elt (tabulated-list-get-entry) sort-column)
+      (cl-loop with largest-group-size = 1
+               with prev-data = (elt (tabulated-list-get-entry) sort-column)
                while (not (eobp))
                do (forward-line 1)
                for current-data = (elt (tabulated-list-get-entry) sort-column)
-               when (not (equal current-data prev-data))
+               if (not (equal current-data prev-data))
                do (progn
                     (ov (line-beginning-position) (line-beginning-position) 'before-string "\n")
-                    (setq prev-data current-data))))))
+                    (setq prev-data current-data))
+               else do (incf largest-group-size)
+               finally do (when (< largest-group-size min-group-size)
+                            (ov-clear))))))
 
 ;;;;;; Archived/readd
 
