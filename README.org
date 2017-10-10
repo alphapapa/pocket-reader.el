@@ -35,6 +35,10 @@ Sorted by site, with only the site colorized:
 Sorted by favorite status, not colorized:
 
 [[screenshots/by-favorite-not-colorized.png]]
+
+Sorted by date, showing some excerpts, some marked items, and the bottom window displaying one of the articles using the =org-web-tools-read-url-as-org= command (currently the default when =RET= is pressed):
+
+[[screenshots/with-excerpts-and-org-web-tools.png]]
                    
 ** Installation
 :PROPERTIES:
