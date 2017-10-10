@@ -98,6 +98,26 @@ These special keywords can be used when searching:
 -  =:COUNT=  Return at most /COUNT/ (a number) items.  This limit persists until a new search is run.
 -  =:t:TAG=, =t:TAG=  Return items with /TAG/ (only one tag may be searched for, a limitation of the Pocket API).
 
+*** Accessories
+
+If you use =w3m=, you might find this function useful to bind in =w3m-lnum-mode-map=:
+
+#+BEGIN_SRC elisp
+  (cl-defun ap/w3m-lnum-add-to-pocket (&key (type 1))
+    "Add link to Pocket with lnum."
+    (interactive)
+    (w3m-with-lnum
+     type ""
+     (when-let ((num (car (w3m-lnum-read-interactive
+                           "Anchor number: "
+                           'w3m-lnum-highlight-anchor
+                           type last-index w3m-current-url)))
+                (info (w3m-lnum-get-anchor-info num))
+                (url (car info)))
+       (when (pocket-lib-add-urls url)
+         (message "Added: %s" url)))))
+#+END_SRC
+
 ** Changelog
 :PROPERTIES:
 :TOC:      ignore-children
