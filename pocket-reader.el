@@ -59,6 +59,10 @@
 ;; "tr" pocket-reader-remove-tags
 ;; "tt" pocket-reader-set-tags
 ;; "ts" pocket-reader-tag-search
+;;
+;; In eww, Org, w3m, and some other major modes,
+;; `pocket-reader-add-link' can be used to add a link at point to
+;; Pocket.
 
 ;;; Code:
 
@@ -67,6 +71,7 @@
 (require 'cl-lib)
 (require 'url-parse)
 (require 'seq)
+(require 'thing-at-pt)
 
 (require 'dash)
 (require 'kv)
@@ -958,6 +963,59 @@ Returns list with these values:
          (column-width (elt col-data 1))
          (end-col (+ start-col column-width)))
     (list col-num start-col end-col column-width)))
+
+;;;;; URL-adding helpers
+
+(defun pocket-reader-add-link ()
+  "Add link at point to Pocket.
+This function tries to work in multiple major modes, such as w3m,
+eww, and Org."
+  (interactive)
+  (cl-case major-mode
+    ('eww-mode (pocket-reader-eww-add-link))
+    ('org-mode (pocket-reader-org-add-link))
+    ('w3m-mode (pocket-reader-w3m-lnum-add-link))
+    (t (pocket-reader-generic-add-link))))
+
+(defun pocket-reader-eww-add-link ()
+  "Add link at point to Pocket in eww buffers."
+  (interactive)
+  ;; `eww-links-at-point' returns a list of links, but we only use the
+  ;; first one.  I think this is the right thing to do in most, if not
+  ;; all, cases.
+  (when-let ((url (car (eww-links-at-point))))
+    (when (pocket-lib-add-urls url)
+      (message "Added: %s" url))))
+
+(defun pocket-reader-org-add-link ()
+  "Add link at point to Pocket in Org buffers."
+  (interactive)
+  (when-let ((url (when (org-in-regexp org-bracket-link-regexp)
+                    (org-link-unescape (match-string-no-properties 1)))))
+    (when (pocket-lib-add-urls url)
+      (message "Added: %s" url))))
+
+(cl-defun pocket-reader-w3m-lnum-add-link (&key (type 1))
+  "Add link to Pocket with lnum in w3m buffers."
+  (interactive)
+  (w3m-with-lnum
+   type ""
+   (when-let ((num (car (w3m-lnum-read-interactive
+                         "Anchor number: "
+                         'w3m-lnum-highlight-anchor
+                         type last-index w3m-current-url)))
+              (info (w3m-lnum-get-anchor-info num))
+              (url (car info)))
+     (when (pocket-lib-add-urls url)
+       (message "Added: %s" url)))))
+
+(defun pocket-reader-generic-add-link ()
+  "Try to add URL at point to Pocket using `thing-at-pt'."
+  (interactive)
+  (when-let ((url (thing-at-point-url-at-point)))
+    (when (pocket-lib-add-urls url)
+      (message "Added: %s" url))))
+
 
 ;;;; Footer
 
