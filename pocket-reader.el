@@ -205,6 +205,15 @@ REGEXP REGEXP ...)."
   :options '(pocket-reader--apply-faces
              pocket-reader--add-spacers))
 
+(defcustom pocket-reader-url-priorities
+  '(:amp_url :resolved_url)
+  "URLs for each item are chosen in this order.
+Pocket provides multiple URLs for each item, depending on what it
+can find.  This allows users to choose which URLs they prefer to
+use when opening, copying, etc."
+  :type '(repeat symbol)
+  :options '(:amp_url :resolved_url))
+
 ;;;;;; Faces
 
 (defface pocket-reader-marked `((default :inverse-video t)) "Face for marked items")
@@ -494,7 +503,7 @@ other special keywords."
   "Open URL of current item with default function."
   (interactive)
   (pocket-reader--at-marked-or-current-items
-    (let* ((url (pocket-reader--get-property :resolved_url))
+    (let* ((url (pocket-reader--get-url))
            (fn (or fn (pocket-reader--map-url-open-fn url))))
       (when (funcall fn url)
         ;; Item opened successfully
@@ -521,7 +530,7 @@ The `browse-url-default-browser' function is used."
 (defun pocket-reader-copy-url ()
   "Copy URL of current item to kill-ring/clipboard."
   (interactive)
-  (when-let ((url (pocket-reader--get-property :resolved_url)))
+  (when-let ((url (pocket-reader--get-url)))
     (kill-new url)
     (message url)))
 
@@ -560,6 +569,14 @@ The `browse-url-default-browser' function is used."
                         (apply #'pocket-reader--archive-items archives))))
 
 ;;;;; Helpers
+
+(defun pocket-reader--get-url ()
+  "Return URL for current item.
+Chooses URL fields as configured by `pocket-reader-url-priorities'."
+  (cl-loop for key in pocket-reader-url-priorities
+           for url = (pocket-reader--get-property key)
+           when url
+           return url))
 
 (defun pocket-reader--item-visible-p ()
   "Return non-nil if current item is visible (i.e. not hidden by an overlay)."
