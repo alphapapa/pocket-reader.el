@@ -957,7 +957,12 @@ Gets tags from text property."
       (pocket-reader--set-column-face "*" 'pocket-reader-favorite-star))
     (when (or pocket-reader-color-site
               pocket-reader-color-title)
-      (pocket-reader--set-site-face))))
+      (pocket-reader--set-site-face))
+    (when pocket-reader-color-tags
+      (pocket-reader--set-tags-faces))))
+
+(defcustom pocket-reader-color-tags t
+  "Colorize tags uniquely.")
 
 (defun pocket-reader--set-site-face ()
   "Apply colored face to site column for current entry."
@@ -969,6 +974,18 @@ Gets tags from text property."
       (pocket-reader--set-column-face "Site" face))
     (when pocket-reader-color-title
       (pocket-reader--set-column-face "Title" face))))
+
+(defun pocket-reader--set-tags-faces ()
+  "Apply faces to tags in tags column for current entry."
+  (let* ((column (tabulated-list--column-number "Tags"))
+         (tags (pocket-reader--get-property :tags))
+         (tag-string (cl-loop for tag in tags
+                              for hash = (rainbow-identifiers--hash-function tag)
+                              for face = (rainbow-identifiers-cie-l*a*b*-choose-face hash)
+                              do (add-face-text-property 0 (length tag) face 'append tag)
+                              collect tag into results
+                              finally return (s-join "," results))))
+    (tabulated-list-set-col column tag-string)))
 
 (defun pocket-reader--set-column-face (column face)
   "Apply FACE to COLUMN on current line.
