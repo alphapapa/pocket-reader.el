@@ -84,6 +84,7 @@ Commands operate on the current item or marked items.  These keys can be used in
 -  =U=: Unmark all items.
 -  =o=: Show more items (using the current count limit).
 -  =l=: Limit current view to items matching string (this does not run a new search).
+-  =r=: Open random item from current items.  With prefix, read a key and call command bound to it instead of using the default opening function (e.g. use =b= to open in external browser).
 -  =ta=: Add tags.
 -  =tr=: Remove tags.
 -  =tt=: Set tags.

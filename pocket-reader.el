@@ -55,6 +55,7 @@
 ;; "U" pocket-reader-unmark-all
 ;; "o" pocket-reader-more
 ;; "l" pocket-reader-limit
+;; "r" pocket-reader-random-item
 ;; "ta" pocket-reader-add-tags
 ;; "tr" pocket-reader-remove-tags
 ;; "tt" pocket-reader-set-tags
@@ -104,6 +105,7 @@
                     "U" pocket-reader-unmark-all
                     "o" pocket-reader-more
                     "l" pocket-reader-limit
+                    "r" pocket-reader-random-item
                     "ta" pocket-reader-add-tags
                     "tr" pocket-reader-remove-tags
                     "tt" pocket-reader-set-tags
@@ -338,6 +340,22 @@ alist, get the `item-id' from it."
                  do (forward-line 1)))
     ;; No query; show all entries
     (ov-clear 'display "")))
+
+(defun pocket-reader-random-item (prefix)
+  "Open a random item from the current list.
+With universal prefix, read a key and call the command bound to
+that keystroke on a random item."
+  (interactive "p")
+  (let ((fn (or (and (> prefix 1)
+                     (let ((key (read-key "Key: ")))
+                       (alist-get key pocket-reader-mode-map)))
+                #'pocket-reader-open-url)))
+    (with-pocket-reader
+     (cl-loop do (progn
+                   (goto-char (random (buffer-size)))
+                   (beginning-of-line))
+              while (not (pocket-reader--item-visible-p))
+              finally do (funcall fn)))))
 
 (defun pocket-reader-excerpt ()
   "Show excerpt for marked or current items."
