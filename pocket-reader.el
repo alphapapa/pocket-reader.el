@@ -72,7 +72,7 @@
 (require 'cl-lib)
 (require 'url-parse)
 (require 'seq)
-(require 'thing-at-pt)
+(require 'thingatpt)
 
 (require 'dash)
 (require 'kv)
