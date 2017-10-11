@@ -147,6 +147,7 @@ item ID and second is the overlay used to mark it.")
     :has_video
     :has_image
     :word_count
+    :given_url
     :amp_url
     :resolved_url)
   "Keys to use in Pocket API responses, optionally with function to filter each one through.")
@@ -691,7 +692,9 @@ QUERY is a string which may contain certain keywords:
                            (vector (pocket-reader--format-timestamp (string-to-number (plist-get it :time_added)))
                                    (pocket-reader--favorite-string (plist-get it :favorite))
                                    title
-                                   (pocket-reader--url-domain (plist-get it :resolved_url))
+                                   (pocket-reader--url-domain (or (plist-get it :resolved_url)
+                                                                  (plist-get it :amp_url)
+                                                                  (plist-get it :given_url)))
                                    tags)))))
 
 (defun pocket-reader--action (action &optional arg)
