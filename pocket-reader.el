@@ -510,7 +510,7 @@ other special keywords."
         ;; Item opened successfully
         (when pocket-reader-archive-on-open
           (pocket-reader--with-pocket-reader-buffer
-            (pocket-reader-toggle-archived)))))))
+            (pocket-reader--archive-items (pocket-reader--current-item))))))))
 
 (defun pocket-reader-pop-to-url ()
   "Open URL of current item with default pop-to function."
