@@ -49,6 +49,7 @@
 ;; "*" pocket-reader-toggle-favorite
 ;; "f" pocket-reader-toggle-favorite
 ;; "F" pocket-reader-show-unread-favorites
+;; "g" pocket-reader-refresh
 ;; "s" pocket-reader-search
 ;; "m" pocket-reader-toggle-mark
 ;; "M" pocket-reader-mark-all
@@ -99,6 +100,7 @@
                     "*" pocket-reader-toggle-favorite
                     "f" pocket-reader-toggle-favorite
                     "F" pocket-reader-show-unread-favorites
+                    "g" pocket-reader-refresh
                     "s" pocket-reader-search
                     "m" pocket-reader-toggle-mark
                     "M" pocket-reader-mark-all
@@ -322,6 +324,11 @@ alist, get the `item-id' from it."
     (pocket-reader--add-items items)
     (unless items
       (message "No items for query: %s" query))))
+
+(defun pocket-reader-refresh ()
+  "Refresh list using current query."
+  (interactive)
+  (pocket-reader-search pocket-reader-query))
 
 (defun pocket-reader-show-unread-favorites ()
   "Show unread favorite items."

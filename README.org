@@ -78,6 +78,7 @@ Commands operate on the current item or marked items.  These keys can be used in
 -  =E=: Show excerpt for all items.
 -  =*=, =f=: Toggle favorite status.
 -  =F=: Show unread, favorite items.
+-  =g=: Refresh list using last query (or default query).
 -  =s=: Search for items (or display default view if no query is entered).
 -  =m=: Toggle mark of current item.
 -  =M=: Mark all items.
