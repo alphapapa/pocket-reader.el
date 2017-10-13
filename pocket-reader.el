@@ -989,7 +989,7 @@ COLUMN may be the column name or number."
   (-let* (((num start end width) (pocket-reader--column-data column))
           ;; Convert column positions to buffer positions
           (start (+ (line-beginning-position) start))
-          (end (+ start width)))
+          (end (+ start width (1- num))))
     (pocket-reader--with-pocket-reader-buffer
       (add-face-text-property start end face t))))
 
