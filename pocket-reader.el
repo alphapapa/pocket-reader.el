@@ -187,6 +187,10 @@ item ID and second is the overlay used to mark it.")
   "Show this many items in the list."
   :type 'integer)
 
+(defcustom pocket-reader-site-column-max-width 22
+  "Maximum width of the site column."
+  :type 'integer)
+
 (defcustom pocket-reader-url-open-fn-map
   '((eww-browse-url "news.ycombinator.com"))
   "A list mapping URL-matching regular expressions to functions used to open the URL.
@@ -723,6 +727,8 @@ action in the Pocket API."
   (when-let ((site-width (cl-loop for item in pocket-reader-items
                                   maximizing (length (elt (cadr item) 3))))
              (title-width (- (window-text-width) 11 2 site-width 10 1)))
+    (when (> site-width pocket-reader-site-column-max-width)
+      (setq site-width pocket-reader-site-column-max-width))
     (setq tabulated-list-format (vector (list "Added" 10 t)
                                         (list "*" 1 t)
                                         (list "Title" title-width t)
