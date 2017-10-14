@@ -737,7 +737,7 @@ action in the Pocket API."
              (title-width (- (window-text-width) 11 2 site-width 10 1)))
     (when (> site-width pocket-reader-site-column-max-width)
       (setq site-width pocket-reader-site-column-max-width))
-    (setq tabulated-list-format (vector (list "Added" 10 t)
+    (setq tabulated-list-format (vector (list "Added" 10 #'pocket-reader--added<)
                                         (list "*" 1 t)
                                         (list "Title" title-width t)
                                         (list "Site" site-width t)
@@ -1022,6 +1022,16 @@ Returns list with these values:
          (column-width (elt col-data 1))
          (end-col (+ start-col column-width)))
     (list col-num start-col end-col column-width)))
+
+(defun pocket-reader--added< (a b)
+  "Return non-nil if A's :time_added timestamp is less than B's.
+Suitable for sorting `tabulated-list-entries'."
+  (cl-flet ((added (it) (get-text-property 0 :time_added (aref (cadr it) 2))))
+    (let ((a-added (added a))
+          (b-added (added b)))
+      ;; Everything returned from the Pocket API is a string, even the timestamps, so I guess we might
+      ;; as well use `string<' rather than converting them to integers first.
+      (string< a-added b-added))))
 
 ;;;;; URL-adding helpers
 
