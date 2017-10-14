@@ -371,12 +371,12 @@ that keystroke on a random item."
                      (let ((key (read-key "Key: ")))
                        (alist-get key pocket-reader-mode-map)))
                 #'pocket-reader-open-url)))
-    (with-pocket-reader
-     (cl-loop do (progn
-                   (goto-char (random (buffer-size)))
-                   (beginning-of-line))
-              while (not (pocket-reader--item-visible-p))
-              finally do (funcall fn)))))
+    (pocket-reader--with-pocket-reader-buffer
+      (cl-loop do (progn
+                    (goto-char (random (buffer-size)))
+                    (beginning-of-line))
+               while (not (pocket-reader--item-visible-p))
+               finally do (funcall fn)))))
 
 (defun pocket-reader-excerpt ()
   "Show excerpt for marked or current items."
