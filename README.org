@@ -107,7 +107,7 @@ These special keywords can be used when searching:
 :TOC:      ignore-children
 :END:
 
-*** 0.1-pre
+*** 0.1
 
 Initial release.
 
