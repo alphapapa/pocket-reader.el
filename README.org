@@ -79,7 +79,7 @@ Commands operate on the current item or marked items.  These keys can be used in
 -  =*=, =f=: Toggle favorite status.
 -  =F=: Show unread, favorite items.
 -  =g=: Refresh list using last query (or default query).
--  =s=: Search for items (or display default view if no query is entered).
+-  =s=: Search for items (or display default view if no query is entered).  With prefix, add items instead of replacing (this can be used in lieu of boolean OR searches, since Pocket doesn't support them).
 -  =m=: Toggle mark of current item.
 -  =M=: Mark all items.
 -  =U=: Unmark all items.
@@ -108,6 +108,20 @@ These special keywords can be used when searching:
 :END:
 
 *** 0.2-pre
+
+**** Additions
+
+-  =pocket-reader-search= (bound to =s=) can be called with a prefix to add items to the list instead of replacing the list, which can be used in lieu of boolean OR searches, since Pocket doesn't support them.  For example, you could define a custom search command like:
+
+#+BEGIN_SRC elisp
+  (defun ap/pocket-reader-show-favorites ()
+    "Show favorites and items tagged \"check\"."
+    (interactive)
+    (pocket-reader-search ":* :unread")
+    (pocket-reader-search ":all t:check" :add t))
+#+END_SRC
+
+- =pocket-reader-more= and =pocket-reader-refresh= both handle multiple queries when =pocket-reader-search= is called with a prefix.  For example, you could search for =t:emacs=, then add results for =t:linux=, and then =pocket-reader-more= would add more items for both queries, and =pocket-reader-refresh= would update the list for both queries.  Or, in other words, these commands "DTRT."
 
 **** Changes
 

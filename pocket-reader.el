@@ -128,8 +128,8 @@ not be used outside of functions that already use it.")
 (defvar pocket-reader-offset 0
   "The current offset.")
 
-(defvar pocket-reader-query nil
-  "The current query string.")
+(defvar pocket-reader-queries nil
+  "List of current query strings.")
 
 (defvar pocket-reader-mark-overlays nil
   "List of overlays used to mark items.
@@ -337,25 +337,41 @@ example."
   (switch-to-buffer (get-buffer-create "*pocket-reader*"))
   (pocket-reader-mode))
 
-(defun pocket-reader-search (&optional query)
-  "Search Pocket items with QUERY."
+(cl-defun pocket-reader-search (&optional query &key add)
+  "Search Pocket items with QUERY.
+If QUERY is nil, show default list.  With prefix or ADD non-nil,
+add items instead of replacing."
   ;; This function is the main one used to get and display items.
-  ;; When QUERY is nil, it simply shows the default list of unread items.
   (interactive (list (read-from-minibuffer "Query: ")))
-  (custom-reevaluate-setting 'pocket-reader-show-count)
-  (pocket-reader-unmark-all)
-  (setq pocket-reader-offset 0
-        pocket-reader-query query
-        pocket-reader-items (ht))
+  (unless (or current-prefix-arg add)
+    ;; Not adding; reset everything
+    (custom-reevaluate-setting 'pocket-reader-show-count)
+    (pocket-reader-unmark-all)
+    (setq pocket-reader-offset 0
+          pocket-reader-queries nil
+          pocket-reader-items (ht)))
   (let ((items (pocket-reader--get-items query)))
-    (pocket-reader--add-items items)
-    (unless items
-      (message "No items for query: %s" query))))
+    (if items
+        (progn
+          (cl-pushnew query pocket-reader-queries :test #'string=)
+          (pocket-reader--add-items items))
+      ;; No items found
+      (cl-case pocket-reader-offset
+        (0 (message "No items for query: %s" query))
+        (t (message "No more items for query: %s" query))))))
 
 (defun pocket-reader-refresh ()
   "Refresh list using current query."
   (interactive)
-  (pocket-reader-search pocket-reader-query))
+  (cl-case (length pocket-reader-queries)
+    (1 (pocket-reader-search (car pocket-reader-queries)))
+    (t (let ((queries (cdr pocket-reader-queries)))
+         ;; Run the first query as a replacing search, then the rest
+         ;; as adding ones.  We save the queries, because the
+         ;; replacing search overwrites them.
+         (pocket-reader-search (car pocket-reader-queries))
+         (--each queries
+           (pocket-reader-search it :add t))))))
 
 (defun pocket-reader-show-unread-favorites ()
   "Show unread favorite items."
@@ -369,7 +385,8 @@ example."
                     pocket-reader-show-count
                   count))
          (offset (incf pocket-reader-offset count)))
-    (pocket-reader--add-items (pocket-reader--get-items pocket-reader-query))))
+    (cl-loop for query in pocket-reader-queries
+             do (pocket-reader--add-items (pocket-reader--get-items query)))))
 
 (defun pocket-reader-limit (query)
   "Limit display to items matching QUERY."
@@ -742,7 +759,9 @@ QUERY is a string which may contain certain keywords:
          ;; Get items with query
          (items (cdr (cl-third (pocket-lib-get :detail-type "complete" :count count :offset pocket-reader-offset
                                  :search query-string :state state :favorite favorite :tag tag)))))
-    items))
+    (when (> (length items) 0)
+      ;; Empty results return an empty vector, which evaluates non-nil, which isn't useful, so in that case we return nil instead.
+      items)))
 
 (defun pocket-reader--action (action &optional arg)
   "Execute ACTION on marked or current items.
