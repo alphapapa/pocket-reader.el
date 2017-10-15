@@ -408,6 +408,7 @@ that keystroke on a random item."
                                   for excerpt = (pocket-reader--get-property :excerpt)
                                   when excerpt
                                   return excerpt
+                                  do (forward-line 1)
                                   finally do (error "No excerpts found"))))
       ;; Search for overlay showing this excerpt
       (if (cl-loop for ov in (ov-forwards)
