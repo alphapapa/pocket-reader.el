@@ -107,6 +107,12 @@ These special keywords can be used when searching:
 :TOC:      ignore-children
 :END:
 
+*** 0.2-pre
+
+**** Changes
+
+-  Use hash-tables internally instead of text-properties.
+
 *** 0.1.1
 
 *Fix*: Use "given" URL if no AMP or "resolved" URL is available.
