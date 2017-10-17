@@ -385,8 +385,8 @@ add items instead of replacing."
                     pocket-reader-show-count
                   count))
          (offset (incf pocket-reader-offset count)))
-    (cl-loop for query in pocket-reader-queries
-             do (pocket-reader--add-items (pocket-reader--get-items query)))))
+    (--each pocket-reader-queries
+      (pocket-reader-search it :add t))))
 
 (defun pocket-reader-limit (query)
   "Limit display to items matching QUERY."
