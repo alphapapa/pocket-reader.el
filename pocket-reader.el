@@ -345,6 +345,7 @@ add items instead of replacing."
   (interactive (list (read-from-minibuffer "Query: ")))
   (unless (or current-prefix-arg add)
     ;; Not adding; reset everything
+    (goto-char (point-min))
     (custom-reevaluate-setting 'pocket-reader-show-count)
     (pocket-reader-unmark-all)
     (setq pocket-reader-offset 0
@@ -663,7 +664,7 @@ which is chosen as configured by `pocket-reader-url-priorities'."
   (setq tabulated-list-entries (pocket-reader--items-to-tabulated-list-entries pocket-reader-items))
 
   (tabulated-list-init-header)
-  (tabulated-list-revert)
+  (tabulated-list-print 'remember-pos)
   (pocket-reader--finalize))
 
 (defun pocket-reader--items-to-tabulated-list-entries (items)
@@ -1006,11 +1007,12 @@ Gets tags from text property."
   "Apply faces to buffer."
   ;; TODO: Maybe we should use a custom print function but this is simpler
   (pocket-reader--with-pocket-reader-buffer
-    (goto-char (point-min))
-    (while (not (eobp))
-      (pocket-reader--apply-faces-to-line)
-      (forward-line 1))
-    (goto-char (point-min))))
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        (pocket-reader--apply-faces-to-line)
+        (forward-line 1))
+      (goto-char (point-min)))))
 
 (defun pocket-reader--apply-faces-to-line ()
   "Apply faces to current line."
