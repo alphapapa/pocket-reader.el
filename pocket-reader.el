@@ -407,10 +407,10 @@ add items instead of replacing."
   (if (s-present? query)
       (save-excursion
         (goto-char (point-min))
-        (cl-loop while (not (eobp))
-                 unless (re-search-forward query (line-end-position) t)
-                 do (ov (line-beginning-position) (1+ (line-end-position)) 'display "")
-                 do (forward-line 1)))
+        (while (not (eobp))
+          (unless (re-search-forward query (line-end-position) t)
+            (ov (line-beginning-position) (1+ (line-end-position)) 'display ""))
+          (forward-line 1)))
     ;; No query; show all entries
     (ov-clear 'display "")))
 
