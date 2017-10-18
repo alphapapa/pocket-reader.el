@@ -364,15 +364,25 @@ add items instead of replacing."
 (defun pocket-reader-refresh ()
   "Refresh list using current query."
   (interactive)
-  (cl-case (length pocket-reader-queries)
-    (1 (pocket-reader-search (car pocket-reader-queries)))
-    (t (let ((queries (cdr pocket-reader-queries)))
-         ;; Run the first query as a replacing search, then the rest
-         ;; as adding ones.  We save the queries, because the
-         ;; replacing search overwrites them.
-         (pocket-reader-search (car pocket-reader-queries))
-         (--each queries
-           (pocket-reader-search it :add t))))))
+  (let ((first-line-visible (pos-visible-in-window-p (point-min))))
+    (cl-case (length pocket-reader-queries)
+      (1 (pocket-reader-search (car pocket-reader-queries)))
+      (t (let ((queries (cdr pocket-reader-queries)))
+           ;; Run the first query as a replacing search, then the rest
+           ;; as adding ones.  We save the queries, because the
+           ;; replacing search overwrites them.
+           (pocket-reader-search (car pocket-reader-queries))
+           (--each queries
+             (pocket-reader-search it :add t)))))
+    (when first-line-visible
+      ;; If point is on the first item, and new items are added above
+      ;; it, the new items will be off-screen, and the user won't
+      ;; realize they have been added.  So, if we started on what was
+      ;; the first line, show what's now the first line.
+      (let ((pos (point)))
+        (goto-char (point-min))
+        (redisplay)
+        (goto-char pos)))))
 
 (defun pocket-reader-show-unread-favorites ()
   "Show unread favorite items."
