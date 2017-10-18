@@ -364,6 +364,7 @@ add items instead of replacing."
 (defun pocket-reader-refresh ()
   "Refresh list using current queries."
   (interactive)
+  ;; TODO: Can we use the API's "since" option to just get changes?
   (let ((first-line-visible (pos-visible-in-window-p (point-min))))
     (cl-case (length pocket-reader-queries)
       (1 (pocket-reader-search (car pocket-reader-queries)))
