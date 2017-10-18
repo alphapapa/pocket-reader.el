@@ -362,7 +362,7 @@ add items instead of replacing."
         (t (message "No more items for query: %s" query))))))
 
 (defun pocket-reader-refresh ()
-  "Refresh list using current query."
+  "Refresh list using current queries."
   (interactive)
   (let ((first-line-visible (pos-visible-in-window-p (point-min))))
     (cl-case (length pocket-reader-queries)
