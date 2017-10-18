@@ -365,7 +365,7 @@ add items instead of replacing."
   "Refresh list using current queries."
   (interactive)
   ;; TODO: Can we use the API's "since" option to just get changes?
-  (let ((first-line-visible (pos-visible-in-window-p (point-min))))
+  (let ((first-line-visible-p (pos-visible-in-window-p (point-min))))
     (cl-case (length pocket-reader-queries)
       (1 (pocket-reader-search (car pocket-reader-queries)))
       (t (let ((queries (cdr pocket-reader-queries)))
@@ -375,7 +375,7 @@ add items instead of replacing."
            (pocket-reader-search (car pocket-reader-queries))
            (--each queries
              (pocket-reader-search it :add t)))))
-    (when first-line-visible
+    (when first-line-visible-p
       ;; If point is on the first item, and new items are added above
       ;; it, the new items will be off-screen, and the user won't
       ;; realize they have been added.  So, if we started on what was
