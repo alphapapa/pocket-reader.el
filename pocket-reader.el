@@ -420,8 +420,7 @@ With universal prefix, read a key and call the command bound to
 that keystroke on a random item."
   (interactive "p")
   (let ((fn (or (and (> prefix 1)
-                     (let ((key (read-key "Key: ")))
-                       (alist-get key pocket-reader-mode-map)))
+                     (alist-get (read-key "Key: ") pocket-reader-mode-map))
                 #'pocket-reader-open-url)))
     (pocket-reader--with-pocket-reader-buffer
       (cl-loop do (progn
