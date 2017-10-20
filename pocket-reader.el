@@ -222,6 +222,12 @@ use when opening, copying, etc."
   :type '(repeat symbol)
   :options '(amp_url resolved_url given_url))
 
+(defcustom pocket-reader-added-column-sort-function #'pocket-reader--added-fancy<
+  "Function to sort the \"Added\" column."
+  :type '(radio (function-item :tag "Default (by date, then favorite, then tags, then domain)" pocket-reader--added-fancy<)
+                (function-item :tag "By date only" pocket-reader--added<)
+                (function :tag "Custom function")))
+
 ;;;;;; Faces
 
 (defface pocket-reader-marked `((default :inverse-video t)) "Face for marked items")
@@ -795,7 +801,7 @@ action in the Pocket API."
              (title-width (- (window-text-width) 11 2 domain-width 10 1)))
     (when (> domain-width pocket-reader-site-column-max-width)
       (setq domain-width pocket-reader-site-column-max-width))
-    (setq tabulated-list-format (vector (list "Added" 10 #'pocket-reader--added<)
+    (setq tabulated-list-format (vector (list "Added" 10 pocket-reader-added-column-sort-function)
                                         (list "*" 1 t)
                                         (list "Title" title-width t)
                                         (list "Site" domain-width t)
@@ -978,6 +984,95 @@ Gets tags from text property."
     (cl-member id pocket-reader-mark-overlays
                :test #'= :key #'car)))
 
+;;;;;; Sorting
+
+(defun pocket-reader--added-fancy< (a b)
+  "Return non-nil if A should be sorted before B.
+Items are compared by date, then favorite status, then tags, then
+domain.  Suitable for sorting `tabulated-list-entries'."
+  (cl-flet ((day (it) (let* ((id (car it))
+                             (added-string (pocket-reader--ht-nested pocket-reader-items id 'time_added)) )
+                        (time-to-days (string-to-number added-string)))))
+    (let* ((a-day (day a))
+           (b-day (day b)))
+      (if (= a-day b-day)
+          ;; Same day: compare favorite, then tags, then domain
+          (cl-case (pocket-reader--compare-favorite a b)
+            ('< nil)
+            ('> t)
+            ('= (cl-case (pocket-reader--compare-tags a b)
+                  ('< nil)
+                  ('> t)
+                  ('=
+                   ;; Same tags; compare domain
+                   (pocket-reader--domain< a b)))))
+        ;; Different day: compare day
+        (< a-day b-day)))))
+
+(defun pocket-reader--added< (a b)
+  "Return non-nil if A's `time_added' timestamp is before B's.
+Suitable for sorting `tabulated-list-entries'."
+  (cl-flet ((added (it) (let ((id (car it)))
+                          (pocket-reader--ht-nested pocket-reader-items id 'time_added))))
+    (let ((a-added (added a))
+          (b-added (added b)))
+      ;; Everything returned from the Pocket API is a string, even the timestamps, so I guess we might
+      ;; as well use `string<' rather than converting them to integers first.
+      (string< a-added b-added))))
+
+(defun pocket-reader--domain< (a b)
+  "Return non-nil if A's domain is alphabetically before B's."
+  (cl-flet ((domain (it) (let ((id (car it)))
+                           (pocket-reader--url-domain (pocket-reader--ht-nested pocket-reader-items id 'resolved_url)))))
+    (string< (domain a) (domain b))))
+
+(defun pocket-reader--compare-favorite (a b)
+  "Compare A's and B's favorite statuses.
+If both are the same, return `='.  If only A is a favorite,
+return `>'.  If only B, return `<'."
+  (cl-flet ((fav (it) (let ((id (car it)))
+                        (pcase (pocket-reader--ht-nested pocket-reader-items id 'favorite)
+                          ("0" nil)
+                          ("1" t)))))
+    (let ((a-fav (fav a))
+          (b-fav (fav b)))
+      (cond ((eq a-fav b-fav) '=)
+            (a-fav '<)
+            (b-fav '>)))))
+
+(defun pocket-reader--compare-tags (a b)
+  "Compare A's and B's lists of tags.
+If they are the same, return `='.  If they have different numbers
+of tags, return `<' if A has more, or `>' if B has more.  If they
+have the same number of tags, join each list into a single string
+and compare them with `string='."
+  (cl-flet ((tags (it) (let ((id (car it)))
+                         (pocket-reader--ht-nested pocket-reader-items id 'tags))))
+    (let* ((a-tags (tags a))
+           (b-tags (tags b))
+           (a-length (length a-tags))
+           (b-length (length b-tags)))
+      (if (not (or a-tags b-tags))
+          ;; No tags
+          '=
+        ;; Tags
+        (if (not (and a-tags b-tags))
+            ;; One item has no tags
+            (if a-tags
+                '<
+              '>)
+          ;; Different number of tags
+          (if (/= a-length b-length)
+              (if (< a-length b-length)
+                  '<
+                '>)
+            ;; Same number of tags
+            (let ((a-string (s-join "" a-tags))
+                  (b-string (s-join "" b-tags)))
+              (cond ((string= a-string b-string) '=)
+                    ((string< a-string b-string) '<)
+                    (t '>)))))))))
+
 ;;;;;; Strings
 
 (defun pocket-reader--favorite-string (val)
@@ -1079,17 +1174,6 @@ Returns list with these values:
          (column-width (elt col-data 1))
          (end-col (+ start-col column-width)))
     (list col-num start-col end-col column-width)))
-
-(defun pocket-reader--added< (a b)
-  "Return non-nil if A's :time_added timestamp is less than B's.
-Suitable for sorting `tabulated-list-entries'."
-  (cl-flet ((added (it) (let ((id (car it)))
-                          (pocket-reader--ht-nested pocket-reader-items id 'time_added))))
-    (let ((a-added (added a))
-          (b-added (added b)))
-      ;; Everything returned from the Pocket API is a string, even the timestamps, so I guess we might
-      ;; as well use `string<' rather than converting them to integers first.
-      (string< a-added b-added))))
 
 ;;;;; URL-adding helpers
 
