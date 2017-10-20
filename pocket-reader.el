@@ -43,6 +43,7 @@
 ;; "a" pocket-reader-toggle-archived
 ;; "b" pocket-reader-open-in-external-browser
 ;; "c" pocket-reader-copy-url
+;; "d" pocket-reader (return to default view)
 ;; "D" pocket-reader-delete
 ;; "e" pocket-reader-excerpt
 ;; "E" pocket-reader-excerpt-all
@@ -95,6 +96,7 @@
                     "a" pocket-reader-toggle-archived
                     "b" pocket-reader-open-in-external-browser
                     "c" pocket-reader-copy-url
+                    "d" pocket-reader ; Return to default view
                     "D" pocket-reader-delete
                     "e" pocket-reader-excerpt
                     "E" pocket-reader-excerpt-all
@@ -160,6 +162,10 @@ item ID and second is the overlay used to mark it.")
 (defgroup pocket-reader nil
   "Library for accessing GetPocket.com API."
   :group 'external)
+
+(defcustom pocket-reader-default-queries nil
+  "Default queries, used for initial view."
+  :type '(repeat string))
 
 (defcustom pocket-reader-open-url-default-function
   #'org-web-tools-read-url-as-org
@@ -327,7 +333,8 @@ example."
             'append 'local)
 
   (setq tabulated-list-sort-key '("Added" . nil))
-  (pocket-reader-search)
+  (setq pocket-reader-queries pocket-reader-default-queries)
+  (pocket-reader-refresh)
   (unless (cdr tabulated-list-sort-key)
     ;; Invert initial sort order, putting most recent items on top
     (tabulated-list-sort 0)))

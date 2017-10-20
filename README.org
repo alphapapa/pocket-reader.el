@@ -73,6 +73,7 @@ Commands operate on the current item or marked items.  These keys can be used in
 -  =b=: Open with external browser function.
 -  =a=: Toggle archived/unread status.
 -  =c=: Copy URL to the kill ring.
+-  =d=: Show default view.
 -  =D=: Delete item.
 -  =e=: Show excerpt.
 -  =E=: Show excerpt for all items.
@@ -124,6 +125,7 @@ These special keywords can be used when searching:
 - =pocket-reader-more= and =pocket-reader-refresh= both handle multiple queries when =pocket-reader-search= is called with a prefix.  For example, you could search for =t:emacs=, then add results for =t:linux=, and then =pocket-reader-more= would add more items for both queries, and =pocket-reader-refresh= would update the list for both queries.  Or, in other words, these commands "DTRT."
 - A custom sorting function can be set for the =Added= column using the option =pocket-reader-added-column-sort-function=.
      +  The default now sorts by date, then by favorite status, then by tags, and finally by domain.
+- The queries used for the default, initial view are now stored in the option =pocket-reader-default-queries=, and pressing =d= shows the default view.
 
 **** Changes
 
