@@ -408,8 +408,8 @@ add items instead of replacing."
   (interactive "p")
   (let* ((count (if (= 1 count)
                     pocket-reader-show-count
-                  count))
-         (offset (incf pocket-reader-offset count)))
+                  count)))
+    (incf pocket-reader-offset count)
     (--each pocket-reader-queries
       (pocket-reader-search it :add t))))
 
