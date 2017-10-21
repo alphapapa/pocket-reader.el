@@ -787,7 +787,7 @@ QUERY is a string which may contain certain keywords:
       ;; Empty results return an empty vector, which evaluates non-nil, which isn't useful, so in that case we return nil instead.
       items)))
 
-(defun pocket-reader--action (action &optional arg)
+(defun pocket-reader--action (action &rest _)
   "Execute ACTION on marked or current items.
 ACTION should be a string or symbol which is the name of an
 action in the Pocket API."
