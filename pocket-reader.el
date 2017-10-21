@@ -1214,19 +1214,23 @@ eww, and Org."
     (when (pocket-lib-add-urls url)
       (message "Added: %s" url))))
 
-(cl-defun pocket-reader-w3m-lnum-add-link (&key (type 1))
-  "Add link to Pocket with lnum in w3m buffers."
-  (interactive)
-  (w3m-with-lnum
-   type ""
-   (when-let ((num (car (w3m-lnum-read-interactive
-                         "Anchor number: "
-                         'w3m-lnum-highlight-anchor
-                         type last-index w3m-current-url)))
-              (info (w3m-lnum-get-anchor-info num))
-              (url (car info)))
-     (when (pocket-lib-add-urls url)
-       (message "Added: %s" url)))))
+(declare-function 'w3m-with-lnum 'w3m-lnum)
+(declare-function 'w3m-lnum-read-interactive 'w3m-lnum)
+(declare-function 'w3m-lnum-get-anchor-info 'w3m-lnum)
+(with-eval-after-load 'w3m-lnum
+  (cl-defun pocket-reader-w3m-lnum-add-link (&key (type 1))
+    "Add link to Pocket with lnum in w3m buffers."
+    (interactive)
+    (w3m-with-lnum
+     type ""
+     (when-let ((num (car (w3m-lnum-read-interactive
+                           "Anchor number: "
+                           'w3m-lnum-highlight-anchor
+                           type last-index w3m-current-url)))
+                (info (w3m-lnum-get-anchor-info num))
+                (url (car info)))
+       (when (pocket-lib-add-urls url)
+         (message "Added: %s" url))))))
 
 (defun pocket-reader-generic-add-link ()
   "Try to add URL at point to Pocket using `thing-at-pt'."
