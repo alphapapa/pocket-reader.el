@@ -1011,8 +1011,8 @@ domain.  Suitable for sorting `tabulated-list-entries'."
                   ('< nil)
                   ('> t)
                   ('=
-                   ;; Same tags; compare domain
-                   (pocket-reader--domain< a b)))))
+                   ;; Same tags; compare domain (invert since the default order is descending)
+                   (not (pocket-reader--domain< a b))))))
         ;; Different day: compare day
         (< a-day b-day)))))
 
