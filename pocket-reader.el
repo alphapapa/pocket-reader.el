@@ -747,7 +747,7 @@ Items should be a list of items as returned by
     ;; better, safer, to do this?
     (setq tabulated-list-entries (pocket-reader--items-to-tabulated-list-entries pocket-reader-items))))
 
-(defun pocket-reader--finalize (&rest ignore)
+(defun pocket-reader--finalize (&rest _)
   "Finalize the buffer after adding or sorting items."
   ;; Because we have to add this function as advice to
   ;; `tabulated-list--sort-by-column-name', causing it to run in every
