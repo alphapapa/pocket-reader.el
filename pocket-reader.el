@@ -1055,30 +1055,31 @@ have the same number of tags, join each list into a single string
 and compare them with `string='."
   (cl-flet ((tags (it) (let ((id (car it)))
                          (pocket-reader--ht-nested pocket-reader-items id 'tags))))
-    (let* ((a-tags (tags a))
-           (b-tags (tags b))
-           (a-length (length a-tags))
-           (b-length (length b-tags)))
+    (let ((a-tags (tags a))
+          (b-tags (tags b)))
       (if (not (or a-tags b-tags))
           ;; No tags
           '=
-        ;; Tags
+        ;; Some tags
         (if (not (and a-tags b-tags))
             ;; One item has no tags
             (if a-tags
                 '<
               '>)
-          ;; Different number of tags
-          (if (/= a-length b-length)
-              (if (< a-length b-length)
-                  '<
-                '>)
-            ;; Same number of tags
-            (let ((a-string (s-join "" a-tags))
-                  (b-string (s-join "" b-tags)))
-              (cond ((string= a-string b-string) '=)
-                    ((string< a-string b-string) '<)
-                    (t '>)))))))))
+          ;; Both items have tags
+          (let ((a-length (length a-tags))
+                (b-length (length b-tags)))
+            (if (/= a-length b-length)
+                ;; Different number of tags
+                (if (< a-length b-length)
+                    '<
+                  '>)
+              ;; Same number of tags
+              (let ((a-string (s-join "" a-tags))
+                    (b-string (s-join "" b-tags)))
+                (cond ((string= a-string b-string) '=)
+                      ((string< a-string b-string) '<)
+                      (t '>))))))))))
 
 ;;;;;; Strings
 
