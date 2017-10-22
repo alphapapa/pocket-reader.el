@@ -52,6 +52,7 @@
 ;; "F" pocket-reader-show-unread-favorites
 ;; "g" pocket-reader-refresh
 ;; "s" pocket-reader-search
+;; "S" pocket-reader-resort
 ;; "m" pocket-reader-toggle-mark
 ;; "M" pocket-reader-mark-all
 ;; "U" pocket-reader-unmark-all
@@ -105,6 +106,7 @@
                     "F" pocket-reader-show-unread-favorites
                     "g" pocket-reader-refresh
                     "s" pocket-reader-search
+                    "S" pocket-reader-resort
                     "m" pocket-reader-toggle-mark
                     "M" pocket-reader-mark-all
                     "U" pocket-reader-unmark-all
@@ -622,6 +624,12 @@ The `browse-url-default-browser' function is used."
   (interactive)
   (when (yes-or-no-p "Delete item(s)?")
     (apply #'pocket-reader--delete-items (pocket-reader--marked-or-current-items))))
+
+(defun pocket-reader-resort ()
+  "Re-sort list."
+  (interactive)
+  (tabulated-list-sort 0)
+  (tabulated-list-sort 0))
 
 (defun pocket-reader-toggle-favorite ()
   "Toggle current or marked items' favorite status."
