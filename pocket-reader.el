@@ -285,29 +285,6 @@ get the `item-id' from it."
                   do (forward-line 1)
                   finally do (error "Item ID not found: %s" id))))))
 
-(defmacro pocket-reader--ht-nested (&rest ht-and-keys)
-  "Access nested hash tables by HT-AND-KEYS.
-The first item should be a hash table, containing another hash
-table at each nested key.  See comment in function source for
-example."
-  ;; Example:
-  ;; (let ((alphabets (ht ("Greek" (ht (1 (ht ('letter "α")
-  ;;                                          ('name "alpha")))
-  ;;                                   (2 (ht ('letter "β")
-  ;;                                          ('name "beta")))))
-  ;;                      ("English" (ht (1 (ht ('letter "a")
-  ;;                                            ('name "A")))
-  ;;                                     (2 (ht ('letter "b")
-  ;;                                            ('name "B"))))))))
-  ;;   (pocket-reader--ht-nested alphabets "Greek" 1 'letter)) ; => "α"
-  (cl-labels ((rec (ht-and-keys)
-                   `(ht-get ,(if (and (consp (cdr ht-and-keys))
-                                      (cddr ht-and-keys))
-                                 (rec (cdr ht-and-keys))
-                               (cadr ht-and-keys))
-                            ,(car ht-and-keys))))
-    (rec (nreverse ht-and-keys))))
-
 (defmacro pocket-reader--at-marked-or-current-items (&rest body)
   "Execute BODY at each marked item, or current item if none are marked."
   (declare (indent defun))
@@ -842,7 +819,7 @@ none is found, returns `pocket-reader-open-url-default-function'."
 (defun pocket-reader--get-property (property)
   "Return value of PROPERTY for current item."
   (let ((id (tabulated-list-get-id)))
-    (pocket-reader--ht-nested pocket-reader-items id property)))
+    (ht-get* pocket-reader-items id property)))
 
 (defun pocket-reader--set-property (property value)
   "Set current item's PROPERTY to VALUE."
@@ -1006,7 +983,7 @@ Gets tags from text property."
 Items are compared by date, then favorite status, then tags, then
 domain.  Suitable for sorting `tabulated-list-entries'."
   (cl-flet ((day (it) (let* ((id (car it))
-                             (added-string (pocket-reader--ht-nested pocket-reader-items id 'time_added)) )
+                             (added-string (ht-get* pocket-reader-items id 'time_added)) )
                         (time-to-days (string-to-number added-string)))))
     (let* ((a-day (day a))
            (b-day (day b)))
@@ -1028,7 +1005,7 @@ domain.  Suitable for sorting `tabulated-list-entries'."
   "Return non-nil if A's `time_added' timestamp is before B's.
 Suitable for sorting `tabulated-list-entries'."
   (cl-flet ((added (it) (let ((id (car it)))
-                          (pocket-reader--ht-nested pocket-reader-items id 'time_added))))
+                          (ht-get* pocket-reader-items id 'time_added))))
     (let ((a-added (added a))
           (b-added (added b)))
       ;; Everything returned from the Pocket API is a string, even the timestamps, so I guess we might
@@ -1038,7 +1015,7 @@ Suitable for sorting `tabulated-list-entries'."
 (defun pocket-reader--domain< (a b)
   "Return non-nil if A's domain is alphabetically before B's."
   (cl-flet ((domain (it) (let ((id (car it)))
-                           (pocket-reader--url-domain (pocket-reader--ht-nested pocket-reader-items id 'resolved_url)))))
+                           (pocket-reader--url-domain (ht-get* pocket-reader-items id 'resolved_url)))))
     (string< (domain a) (domain b))))
 
 (defun pocket-reader--compare-favorite (a b)
@@ -1046,7 +1023,7 @@ Suitable for sorting `tabulated-list-entries'."
 If both are the same, return `='.  If only A is a favorite,
 return `>'.  If only B, return `<'."
   (cl-flet ((fav (it) (let ((id (car it)))
-                        (pcase (pocket-reader--ht-nested pocket-reader-items id 'favorite)
+                        (pcase (ht-get* pocket-reader-items id 'favorite)
                           ("0" nil)
                           ("1" t)))))
     (let ((a-fav (fav a))
@@ -1062,7 +1039,7 @@ of tags, return `<' if A has more, or `>' if B has more.  If they
 have the same number of tags, join each list into a single string
 and compare them with `string='."
   (cl-flet ((tags (it) (let ((id (car it)))
-                         (pocket-reader--ht-nested pocket-reader-items id 'tags))))
+                         (ht-get* pocket-reader-items id 'tags))))
     (let ((a-tags (tags a))
           (b-tags (tags b)))
       (if (not (or a-tags b-tags))
