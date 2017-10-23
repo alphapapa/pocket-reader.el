@@ -976,7 +976,7 @@ deduplicated."
 (defun pocket-reader--set-tags-column ()
   "Set tags column for current entry.
 Gets tags from text property."
-  (tabulated-list-set-col 4 (s-join "," (pocket-reader--get-property 'tags))))
+  (tabulated-list-set-col 4 (s-join "," (pocket-reader--get-property 'tags)) 'change-entry-data))
 
 ;;;;;; Marking
 
