@@ -1005,12 +1005,10 @@ domain.  Suitable for sorting `tabulated-list-entries'."
   "Return non-nil if A's `time_added' timestamp is before B's.
 Suitable for sorting `tabulated-list-entries'."
   (cl-flet ((added (it) (let ((id (car it)))
-                          (ht-get* pocket-reader-items id 'time_added))))
+                          (string-to-number (ht-get* pocket-reader-items id 'time_added)))))
     (let ((a-added (added a))
           (b-added (added b)))
-      ;; Everything returned from the Pocket API is a string, even the timestamps, so I guess we might
-      ;; as well use `string<' rather than converting them to integers first.
-      (string< a-added b-added))))
+      (< a-added b-added))))
 
 (defun pocket-reader--domain< (a b)
   "Return non-nil if A's domain is alphabetically before B's."
