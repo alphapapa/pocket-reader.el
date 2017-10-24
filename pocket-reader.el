@@ -1171,12 +1171,14 @@ Returns list with these values:
 (defun pocket-reader-add-link ()
   "Add link at point to Pocket.
 This function tries to work in multiple major modes, such as w3m,
-eww, and Org."
+eww, elfeed, and Org."
   (interactive)
   (cl-case major-mode
     ('eww-mode (pocket-reader-eww-add-link))
     ('org-mode (pocket-reader-org-add-link))
     ('w3m-mode (pocket-reader-w3m-lnum-add-link))
+    ('elfeed-search-mode (pocket-reader-elfeed-search-add-link))
+    ('elfeed-show-mode (pocket-reader-elfeed-entry-add-link))
     (t (pocket-reader-generic-add-link))))
 
 (defun pocket-reader-eww-add-link ()
@@ -1214,6 +1216,24 @@ eww, and Org."
                 (url (car info)))
        (when (pocket-lib-add-urls url)
          (message "Added: %s" url))))))
+
+(with-eval-after-load 'elfeed
+  (defun pocket-reader-elfeed-search-add-link ()
+    "Add links for selected entries in Elfeed search-mode buffer to Pocket.
+This is only for the elfeed-search buffer, not for entry buffers."
+    (interactive)
+    (when-let ((entries (elfeed-search-selected))
+               (links (mapcar #'elfeed-entry-link entries)))
+      (when (apply #'pocket-lib-add-urls links)
+        (message "Added: %s" (s-join ", " links)))))
+
+  (defun pocket-reader-elfeed-entry-add-link ()
+    "Add links for selected entries in elfeed-show-mode buffer to Pocket.
+This is only for the elfeed-entry buffer, not for search buffers."
+    (interactive)
+    (when-let ((link (elfeed-entry-link elfeed-show-entry)))
+      (when (pocket-lib-add-urls link)
+        (message "Added: %s" link)))))
 
 (defun pocket-reader-generic-add-link ()
   "Try to add URL at point to Pocket using `thing-at-pt'."
