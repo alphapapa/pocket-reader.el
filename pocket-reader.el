@@ -1140,7 +1140,12 @@ COLUMN may be the column name or number."
   (-let* (((num start end width) (pocket-reader--column-data column))
           ;; Convert column positions to buffer positions
           (start (+ (line-beginning-position) start))
-          (end (+ start width (1- num))))
+          (end (+ start width (1- num)))
+          ;; If the last column of the last item is empty or shorter
+          ;; than the column width, this will probably give an
+          ;; args-out-of-range error, so don't try to go past the end
+          ;; of the buffer.
+          (end (min end (point-max))))
     (pocket-reader--with-pocket-reader-buffer
       (add-face-text-property start end face t))))
 
