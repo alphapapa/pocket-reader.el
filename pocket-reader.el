@@ -1173,6 +1173,7 @@ Returns list with these values:
 
 ;;;;; URL-adding helpers
 
+;;;###autoload
 (defun pocket-reader-add-link ()
   "Add link at point to Pocket.
 This function tries to work in multiple major modes, such as w3m,
@@ -1186,6 +1187,7 @@ eww, elfeed, and Org."
     ('elfeed-show-mode (pocket-reader-elfeed-entry-add-link))
     (t (pocket-reader-generic-add-link))))
 
+;;;###autoload
 (defun pocket-reader-eww-add-link ()
   "Add link at point to Pocket in eww buffers."
   (interactive)
@@ -1196,6 +1198,7 @@ eww, elfeed, and Org."
     (when (pocket-lib-add-urls url)
       (message "Added: %s" url))))
 
+;;;###autoload
 (defun pocket-reader-org-add-link ()
   "Add link at point to Pocket in Org buffers."
   (interactive)
@@ -1207,6 +1210,7 @@ eww, elfeed, and Org."
 (declare-function 'w3m-with-lnum 'w3m-lnum)
 (declare-function 'w3m-lnum-read-interactive 'w3m-lnum)
 (declare-function 'w3m-lnum-get-anchor-info 'w3m-lnum)
+;;;###autoload
 (with-eval-after-load 'w3m-lnum
   (cl-defun pocket-reader-w3m-lnum-add-link (&key (type 1))
     "Add link to Pocket with lnum in w3m buffers."
@@ -1222,6 +1226,7 @@ eww, elfeed, and Org."
        (when (pocket-lib-add-urls url)
          (message "Added: %s" url))))))
 
+;;;###autoload
 (with-eval-after-load 'elfeed
   (defun pocket-reader-elfeed-search-add-link ()
     "Add links for selected entries in Elfeed search-mode buffer to Pocket.
@@ -1240,6 +1245,7 @@ This is only for the elfeed-entry buffer, not for search buffers."
       (when (pocket-lib-add-urls link)
         (message "Added: %s" link)))))
 
+;;;###autoload
 (defun pocket-reader-generic-add-link ()
   "Try to add URL at point to Pocket using `thing-at-pt'."
   (interactive)

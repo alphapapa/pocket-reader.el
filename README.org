@@ -133,6 +133,10 @@ These special keywords can be used when searching:
 
 -  Use hash-tables internally instead of text-properties.
 
+**** Fixes
+
+-  Link-adding functions are now autoloaded, so they can be used even if =pocket-reader= hasn't been run yet.
+
 *** 0.1.1
 
 *Fix*: Use "given" URL if no AMP or "resolved" URL is available.
