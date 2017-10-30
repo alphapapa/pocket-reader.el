@@ -10,7 +10,7 @@
 
 This is a client for Pocket (getpocket.com).  It allows you to manage your reading list: add, remove, delete, tag, view, favorite, etc.  Doing so in Emacs with the keyboard is fast and efficient.  Links can be opened in Emacs with any function, or in external browsers, and specific sites/URLs can be opened with specific browser functions.  Views can be sorted by date, title, domain, tags, favorite, etc, and "limited" mutt-style.  Items can be searched for using keywords, tags, favorite status, unread/archived status, etc.  Items can optionally be colorized by site, making it easy to tell which items come from different sites.  Items are grouped depending on the sort column.
 
-** Contents           
+** Contents
 :PROPERTIES:
 :TOC:      this
 :END:
@@ -21,7 +21,7 @@ This is a client for Pocket (getpocket.com).  It allows you to manage your readi
     -  [[#development][Development]]
     -  [[#license][License]]
 ** Screenshots
- 
+
 Marked items are displayed with inverse colors.
 
 Sorted by date-added, with both title and site colorized:
@@ -39,7 +39,7 @@ Sorted by favorite status, not colorized:
 Sorted by date, showing some excerpts, some marked items, and the bottom window displaying one of the articles using the =org-web-tools-read-url-as-org= command (currently the default when =RET= is pressed):
 
 [[screenshots/with-excerpts-and-org-web-tools.png]]
-                   
+
 ** Installation
 :PROPERTIES:
 :TOC:      ignore-children
@@ -57,7 +57,7 @@ Install the required packages listed in =pocket-reader.el=.  Then put this in yo
 (require 'pocket-reader)
 #+END_SRC
 
-** Usage    
+** Usage
 :PROPERTIES:
 :TOC:      ignore-children
 :END:
@@ -123,11 +123,12 @@ These special keywords can be used when searching:
     (pocket-reader-search ":all t:check" :add t))
 #+END_SRC
 
-- =pocket-reader-more= and =pocket-reader-refresh= both handle multiple queries when =pocket-reader-search= is called with a prefix.  For example, you could search for =t:emacs=, then add results for =t:linux=, and then =pocket-reader-more= would add more items for both queries, and =pocket-reader-refresh= would update the list for both queries.  Or, in other words, these commands "DTRT."
-- A custom sorting function can be set for the =Added= column using the option =pocket-reader-added-column-sort-function=.
+-  =pocket-reader-more= and =pocket-reader-refresh= both handle multiple queries when =pocket-reader-search= is called with a prefix.  For example, you could search for =t:emacs=, then add results for =t:linux=, and then =pocket-reader-more= would add more items for both queries, and =pocket-reader-refresh= would update the list for both queries.  Or, in other words, these commands "DTRT."
+-  A custom sorting function can be set for the =Added= column using the option =pocket-reader-added-column-sort-function=.
      +  The default now sorts by date, then by favorite status, then by tags, and finally by domain.
-- The queries used for the default, initial view are now stored in the option =pocket-reader-default-queries=, and pressing =d= shows the default view.
+-  The queries used for the default, initial view are now stored in the option =pocket-reader-default-queries=, and pressing =d= shows the default view.
 -  =pocket-reader-add-link= now supports [[https://github.com/skeeto/elfeed][Elfeed]] buffers.
+-
 
 **** Changes
 
