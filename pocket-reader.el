@@ -398,6 +398,7 @@ add items instead of replacing."
   (interactive (list (read-from-minibuffer "Query: ")))
   (if (s-present? query)
       (save-excursion
+        (pocket-reader-unmark-all)
         (goto-char (point-min))
         (while (not (eobp))
           (unless (re-search-forward query (line-end-position) t)
