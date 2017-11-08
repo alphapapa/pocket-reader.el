@@ -213,6 +213,15 @@ REGEXP REGEXP ...)."
   :type '(alist :key-type function
                 :value-type (repeat string)))
 
+(defcustom pocket-reader-domain-url-type-map
+  '((resolved_url "reddit.com"))
+  "A list mapping URL types from `pocket-reader-url-priorities' to domains.
+
+This is useful when certain sites should have certain URL types
+preferred (e.g. if you prefer not to load AMP URLs for Reddit)."
+  :type '(alist :key-type symbol
+                :value-type (repeat string)))
+
 (defcustom pocket-reader-finalize-hook
   '(pocket-reader--apply-faces
     pocket-reader--add-spacers)
@@ -637,14 +646,27 @@ The `browse-url-default-browser' function is used."
 
 ;;;;; Helpers
 
-(defun pocket-reader--get-url (item)
+(defun pocket-reader--get-url (item &optional &key first)
   "Return URL for ITEM.
-ITEM should be a hash-table with the appropriate keys, one of
-which is chosen as configured by `pocket-reader-url-priorities'."
-  (cl-loop for key in pocket-reader-url-priorities
-           for url = (ht-get item key)
-           when url
-           return url))
+If FIRST is non-nil, return the first URL found, not the best
+one.  ITEM should be a hash-table with the appropriate keys, one
+of which is chosen as configured by
+`pocket-reader-url-priorities'."
+  (let ((prioritized-url (cl-loop for key in pocket-reader-url-priorities
+                                  when (ht-get item key) ; Gets the URL
+                                  return it)))
+    (if first
+        prioritized-url
+      (if-let ((domain (pocket-reader--url-domain prioritized-url))
+               (key (cl-loop for (key . vals) in pocket-reader-domain-url-type-map
+                             when (member domain vals)
+                             return key))
+               (domain-preferred-url (ht-get item key)))
+          ;; Return domain-specific URL type
+          domain-preferred-url
+        ;; Return standard, prioritized URL type
+        (or prioritized-url
+            (error "No URL for item: %s" item))))))
 
 (defun pocket-reader--item-visible-p ()
   "Return non-nil if current item is visible (i.e. not hidden by an overlay)."
@@ -832,7 +854,7 @@ none is found, returns `pocket-reader-open-url-default-function'."
 (defun pocket-reader--url-domain (url)
   "Return domain for URL.
 Common prefixes like www are removed."
-  (replace-regexp-in-string (rx bos (and (or "www") ".")) ""
+  (replace-regexp-in-string (rx bos (and (or "www" "amp") ".")) ""
                             (url-host (url-generic-parse-url url))))
 
 (defun pocket-reader--format-timestamp (timestamp)
@@ -1014,7 +1036,8 @@ Suitable for sorting `tabulated-list-entries'."
 (defun pocket-reader--domain< (a b)
   "Return non-nil if A's domain is alphabetically before B's."
   (cl-flet ((domain (it) (let ((id (car it)))
-                           (pocket-reader--url-domain (ht-get* pocket-reader-items id 'resolved_url)))))
+                           (pocket-reader--url-domain (pocket-reader--get-url (ht-get pocket-reader-items id)
+                                                                              :first t)))))
     (string< (domain a) (domain b))))
 
 (defun pocket-reader--compare-favorite (a b)
