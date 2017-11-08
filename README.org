@@ -132,6 +132,7 @@ These special keywords can be used when searching:
 
 **** Changes
 
+-  Default bind for =pocket-reader-unmark-all= changed from =U= to =u=.  There was nothing bound to =u=, and pressing Shift was tiresome.
 -  Use hash-tables internally instead of text-properties.
 
 **** Fixes

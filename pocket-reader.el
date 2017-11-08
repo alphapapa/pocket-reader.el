@@ -109,7 +109,7 @@
                     "S" pocket-reader-resort
                     "m" pocket-reader-toggle-mark
                     "M" pocket-reader-mark-all
-                    "U" pocket-reader-unmark-all
+                    "u" pocket-reader-unmark-all
                     "o" pocket-reader-more
                     "l" pocket-reader-limit
                     "r" pocket-reader-random-item
