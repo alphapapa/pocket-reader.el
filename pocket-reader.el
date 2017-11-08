@@ -1234,7 +1234,7 @@ This is only for the elfeed-search buffer, not for entry buffers."
     (interactive)
     (when-let ((entries (elfeed-search-selected))
                (links (mapcar #'elfeed-entry-link entries)))
-      (when (apply #'pocket-lib-add-urls links)
+      (when (pocket-lib-add-urls links)
         (message "Added: %s" (s-join ", " links)))))
 
   (defun pocket-reader-elfeed-entry-add-link ()
