@@ -50,9 +50,9 @@
 ;; "*" pocket-reader-toggle-favorite
 ;; "f" pocket-reader-toggle-favorite
 ;; "F" pocket-reader-show-unread-favorites
-;; "g" pocket-reader-refresh
+;; "g" pocket-reader-resort
+;; "G" pocket-reader-refresh
 ;; "s" pocket-reader-search
-;; "S" pocket-reader-resort
 ;; "m" pocket-reader-toggle-mark
 ;; "M" pocket-reader-mark-all
 ;; "U" pocket-reader-unmark-all
@@ -104,9 +104,9 @@
                     "*" pocket-reader-toggle-favorite
                     "f" pocket-reader-toggle-favorite
                     "F" pocket-reader-show-unread-favorites
-                    "g" pocket-reader-refresh
+                    "g" pocket-reader-resort
+                    "G" pocket-reader-refresh
                     "s" pocket-reader-search
-                    "S" pocket-reader-resort
                     "m" pocket-reader-toggle-mark
                     "M" pocket-reader-mark-all
                     "u" pocket-reader-unmark-all

@@ -79,9 +79,9 @@ Commands operate on the current item or marked items.  These keys can be used in
 -  =E=: Show excerpt for all items.
 -  =*=, =f=: Toggle favorite status.
 -  =F=: Show unread, favorite items.
--  =g=: Refresh list using last query (or default query).
+-  =g=: Re-sort list.
+-  =G=: Refresh list using last query (or default query).
 -  =s=: Search for items (or display default view if no query is entered).  With prefix, add items instead of replacing (this can be used in lieu of boolean OR searches, since Pocket doesn't support them).
--  =S:= Re-sort list.
 -  =m=: Toggle mark of current item.
 -  =M=: Mark all items.
 -  =U=: Unmark all items.
@@ -133,6 +133,7 @@ These special keywords can be used when searching:
 **** Changes
 
 -  Default bind for =pocket-reader-unmark-all= changed from =U= to =u=.  There was nothing bound to =u=, and pressing Shift was tiresome.
+-  Bind re-sort command to =g=, and refresh command to =G=.  This is similar to =elfeed=.
 -  Use hash-tables internally instead of text-properties.
 
 **** Fixes
