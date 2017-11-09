@@ -1077,11 +1077,12 @@ and compare them with `string='."
           (let ((a-length (length a-tags))
                 (b-length (length b-tags)))
             (if (/= a-length b-length)
-                ;; Different number of tags
+                ;; Different number of tags: sort by number of tags
                 (if (< a-length b-length)
-                    '<
-                  '>)
-              ;; Same number of tags
+                    ;; Entries with more tags should be sorted earlier
+                    '>
+                  '<)
+              ;; Same number of tags: sort string of tags alphabetically
               (let ((a-string (s-join "" a-tags))
                     (b-string (s-join "" b-tags)))
                 (cond ((string= a-string b-string) '=)
