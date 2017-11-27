@@ -127,7 +127,7 @@ These special keywords can be used when searching:
 -  A custom sorting function can be set for the =Added= column using the option =pocket-reader-added-column-sort-function=.
      +  The default now sorts by date, then by favorite status, then by tags, and finally by domain.
 -  The queries used for the default, initial view are now stored in the option =pocket-reader-default-queries=, and pressing =d= shows the default view.
--  =pocket-reader-add-link= now supports [[https://github.com/skeeto/elfeed][Elfeed]] and w3m buffers.
+-  =pocket-reader-add-link= now supports [[https://github.com/skeeto/elfeed][Elfeed]], w3m, and =shr-mode= buffers.
 -  =pocket-reader-domain-url-type-map= maps domains to "types" of URLs to prefer.  This is useful for, e.g. avoiding [[https://www.ampproject.org/][AMP]] URLs, which Pocket provides in their API (or for preferring them, on sites where the AMP version is more readable).  This variable may be customized.
 
 **** Changes

@@ -1208,6 +1208,7 @@ eww, elfeed, and Org."
     ('eww-mode (pocket-reader-eww-add-link))
     ('org-mode (pocket-reader-org-add-link))
     ('w3m-mode (pocket-reader-w3m-add-link))
+    ('shr-mode (pocket-reader-shr-add-link))
     ('elfeed-search-mode (pocket-reader-elfeed-search-add-link))
     ('elfeed-show-mode (pocket-reader-elfeed-entry-add-link))
     (t (pocket-reader-generic-add-link))))
@@ -1271,6 +1272,14 @@ eww, elfeed, and Org."
         ;; We tried.
         (message "No URL found around point.")))))
 
+;;;###autoload
+(defun pocket-reader-shr-add-link ()
+  "Add link at point in `shr-mode' buffer to Pocket."
+  (interactive)
+  (if-let ((url (get-text-property (point) 'shr-url)))
+      (when (pocket-lib-add-urls url)
+        (message "Added: %s" url))
+    (message "No URL found at point.")))
 
 ;;;###autoload
 (with-eval-after-load 'elfeed
