@@ -1207,7 +1207,7 @@ eww, elfeed, and Org."
   (cl-case major-mode
     ('eww-mode (pocket-reader-eww-add-link))
     ('org-mode (pocket-reader-org-add-link))
-    ('w3m-mode (pocket-reader-w3m-lnum-add-link))
+    ('w3m-mode (pocket-reader-w3m-add-link))
     ('elfeed-search-mode (pocket-reader-elfeed-search-add-link))
     ('elfeed-show-mode (pocket-reader-elfeed-entry-add-link))
     (t (pocket-reader-generic-add-link))))
@@ -1250,6 +1250,27 @@ eww, elfeed, and Org."
                 (url (car info)))
        (when (pocket-lib-add-urls url)
          (message "Added: %s" url))))))
+
+;;;###autoload
+(with-eval-after-load 'w3m
+  (defun pocket-reader-w3m-add-link ()
+    "Add link at point to Pocket in w3m buffers."
+    (interactive)
+    (if-let ((url (or (get-text-property (point) 'w3m-href-anchor)
+                      (unless (bolp)
+                        (save-excursion
+                          (get-text-property (1- (point)) 'w3m-href-anchor)))
+                      (unless (eolp)
+                        (save-excursion
+                          (get-text-property (1+ (point)) 'w3m-href-anchor))))))
+        (when (pocket-lib-add-urls url)
+          (message "Added: %s" url))
+      (if (member 'w3m-lnum-mode minor-mode-list)
+          ;; No URL found around point: use lnum if loaded
+          (pocket-reader-w3m-lnum-add-link)
+        ;; We tried.
+        (message "No URL found around point.")))))
+
 
 ;;;###autoload
 (with-eval-after-load 'elfeed
