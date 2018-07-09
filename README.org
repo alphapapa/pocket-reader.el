@@ -134,6 +134,7 @@ These special keywords can be used when searching:
 
 -  Default bind for =pocket-reader-unmark-all= changed from =U= to =u=.  There was nothing bound to =u=, and pressing Shift was tiresome.
 -  Bind re-sort command to =g=, and refresh command to =G=.  This is similar to =elfeed=.
+-  Bind =random-item= command to =R= instead of =r=.  Since =r= is often a "mark as read" command, this will help avoid accidentally opening random items.
 -  Use hash-tables internally instead of text-properties.
 
 **** Fixes
