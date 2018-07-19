@@ -398,7 +398,7 @@ add items instead of replacing."
   (let* ((count (if (= 1 count)
                     pocket-reader-show-count
                   count)))
-    (incf pocket-reader-offset count)
+    (cl-incf pocket-reader-offset count)
     (--each pocket-reader-queries
       (pocket-reader-search it :add t))))
 
@@ -884,7 +884,7 @@ no spacers will be inserted. "
                do (progn
                     (ov (line-beginning-position) (line-beginning-position) 'before-string "\n")
                     (setq prev-data current-data))
-               else do (incf largest-group-size)
+               else do (cl-incf largest-group-size)
                finally do (when (< largest-group-size min-group-size)
                             (ov-clear))))))
 
