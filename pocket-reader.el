@@ -75,6 +75,7 @@
 (require 'cl-lib)
 (require 'url-parse)
 (require 'seq)
+(require 'subr-x)
 (require 'thingatpt)
 
 (require 'dash)

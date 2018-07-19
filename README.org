@@ -141,6 +141,7 @@ These special keywords can be used when searching:
 
 -  Unmark all items before limiting display, to prevent marked, hidden items from being modified.
 -  Link-adding functions are now autoloaded, so they can be used even if =pocket-reader= hasn't been run yet.
+-  Require =subr-x= for =if-let=.
 
 *** 0.1.1
 
