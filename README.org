@@ -143,6 +143,7 @@ These special keywords can be used when searching:
 -  Link-adding functions are now autoloaded, so they can be used even if =pocket-reader= hasn't been run yet.
 -  Require =subr-x= for =if-let=.
 -  Use =cl-incf= instead of =incf=.
+-  Allow searching for tags with hyphens and other "non-word" characters.
 
 *** 0.1.1
 

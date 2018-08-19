@@ -786,7 +786,7 @@ QUERY is a string which may contain certain keywords:
                             (string-to-number it))
                           pocket-reader-show-count)))
          (tag (pocket-reader--regexp-in-list query-words
-                                             (rx bos (optional ":") "t:" (1+ word) eos)
+                                             (rx bos (optional ":") "t:" (1+ (not space)) eos)
                                              (rx (optional ":") "t:")))
          (query-string (s-join " " query-words))
          ;; Get items with query
