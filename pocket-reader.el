@@ -491,7 +491,7 @@ that keystroke on a random item."
       (pocket-reader--unmark-item (tabulated-list-get-id))
     ;; Unmarked; mark
     (pocket-reader--mark-current-item))
-  (next-line 1))
+  (forward-line 1))
 
 (defun pocket-reader-mark-all ()
   "Mark all visible items."
@@ -1163,7 +1163,7 @@ and compare them with `string='."
 (defun pocket-reader--set-column-face (column face)
   "Apply FACE to COLUMN on current line.
 COLUMN may be the column name or number."
-  (-let* (((num start end width) (pocket-reader--column-data column))
+  (-let* (((num start _end width) (pocket-reader--column-data column))
           ;; Convert column positions to buffer positions
           (start (+ (line-beginning-position) start))
           (end (+ start width (1- num)))
