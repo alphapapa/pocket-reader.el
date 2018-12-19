@@ -1264,7 +1264,8 @@ eww, elfeed, and Org."
                           (get-text-property (1- (point)) 'w3m-href-anchor)))
                       (unless (eolp)
                         (save-excursion
-                          (get-text-property (1+ (point)) 'w3m-href-anchor))))))
+                          (get-text-property (1+ (point)) 'w3m-href-anchor)))
+                      (thing-at-point-url-at-point))))
         (when (pocket-lib-add-urls url)
           (message "Added: %s" url))
       (if (member 'w3m-lnum-mode minor-mode-list)
