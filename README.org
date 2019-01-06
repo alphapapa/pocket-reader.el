@@ -40,6 +40,10 @@ Sorted by date, showing some excerpts, some marked items, and the bottom window 
 
 [[screenshots/with-excerpts-and-org-web-tools.png]]
 
+A screenshot with the default Emacs theme and default settings:
+
+[[screenshots/default-theme.png]]
+
 ** Installation
 :PROPERTIES:
 :TOC:      ignore-children
