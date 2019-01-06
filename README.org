@@ -49,6 +49,8 @@ Sorted by date, showing some excerpts, some marked items, and the bottom window 
 
 If you installed from MELPA, just run the =pocket-reader= command.
 
+*Note:* Please /ignore/ any =Page Not Found= error you might see on the Pocket Web site after authorizing.  Just run the ~pocket-reader~ command after authorizing, and it should work.  You can verify that authorization completed by checking the file =~/.cache/emacs-pocket-lib-token.json=.
+
 *** Manual
 
 Install the required packages listed in =pocket-reader.el=.  Then put this in your init file and run the =pocket-reader= command:
