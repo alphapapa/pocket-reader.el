@@ -5,6 +5,7 @@
 ;; Author: Adam Porter <adam@alphapapa.net>
 ;; Created: 2017-09-25
 ;; Version: 0.2
+;; Package-Version: 20181219.930
 ;; Keywords: pocket
 ;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (kv "0.0.19") (pocket-lib "0.1") (s "1.10") (ov "1.0.6") (rainbow-identifiers "0.2.2") (org-web-tools "0.1") (ht "2.2"))
 ;; URL: https://github.com/alphapapa/pocket-reader.el
@@ -77,7 +78,7 @@
 (require 'seq)
 (require 'subr-x)
 (require 'thingatpt)
-
+(require 'easymenu)
 (require 'dash)
 (require 'kv)
 (require 'ht)
@@ -1310,6 +1311,35 @@ This is only for the elfeed-entry buffer, not for search buffers."
       (when (pocket-lib-add-urls url)
         (message "Added: %s" url))
     (message "No URL found at point.")))
+
+;;; menu
+(easy-menu-define pocket-menu pocket-reader-mode-map "Pocket"
+		      '("Pocket Reader"
+			["Open" pocket-reader-open-url t]
+			["Pop to" pocket-reader-pop-to-url t]
+			["Toggle Archived" pocket-reader-toggle-archived t]
+                        ["Open External" pocket-reader-open-in-external-browser t]
+                        ["Copy URL" pocket-reader-copy-url t]
+			["Default view" pocket-reader t]
+			["Delete" pocket-reader-delete t]
+			["Excerpt" pocket-reader-excerpt t]
+			["Excerpt All" pocket-reader-excerpt-all t]
+			["Toggle Favorite" pocket-reader-toggle-favorite t]
+			["Show Unread Favorites" pocket-reader-show-unread-favorites t]
+			["Resort" pocket-reader-resort t]
+			["Refresh" pocket-reader-refresh t]
+			["Search" pocket-reader-search t]
+			["Mark" pocket-reader-toggle-mark t]
+			["Mark All" pocket-reader-mark-all t]
+			["Unmark All" pocket-reader-unmark-all t]
+ 			["More" pocket-reader-more t]
+			["Limit" pocket-reader-limit t]
+			["Random Item" pocket-reader-random-item t]
+			("Tagging"
+			 ["Add Tag" pocket-reader-add-tags t]
+			 ["Remove Tag" pocket-reader-remove-tags t]
+			 ["Set Tag" pocket-reader-set-tags t]
+			 ["Tag Search" pocket-reader-tag-search t])))
 
 
 ;;;; Footer
