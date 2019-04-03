@@ -1,0 +1,7 @@
+#+TITLE: pocket-reader.el Notes
+
+* Ideas
+
+** TODO Add-URL command
+
+[2019-04-03 Wed 12:39]  I just realized that there's no way to add a URL from the article list.
