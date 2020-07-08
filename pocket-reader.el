@@ -1230,7 +1230,7 @@ eww, elfeed, and Org."
 (defun pocket-reader-org-add-link ()
   "Add link at point to Pocket in Org buffers."
   (interactive)
-  (when-let ((url (when (org-in-regexp org-bracket-link-regexp)
+  (when-let ((url (when (org-in-regexp org-bracket-link-regexp 1)
                     (org-link-unescape (match-string-no-properties 1)))))
     (when (pocket-lib-add-urls url)
       (message "Added: %s" url))))

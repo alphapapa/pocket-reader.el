@@ -120,6 +120,7 @@ These special keywords can be used when searching:
 **** Fixes
 
 -  Handle null or blank URLs returned by Pocket.  (Fixes [[https://github.com/alphapapa/pocket-reader.el/issues/19][#19]], [[https://github.com/alphapapa/pocket-reader.el/issues/20][#20]].  Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
+-  Handle links in Org buffers that span lines.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 
 *** 0.2
 
