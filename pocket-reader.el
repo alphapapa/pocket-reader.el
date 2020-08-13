@@ -654,8 +654,9 @@ one.  ITEM should be a hash-table with the appropriate keys, one
 of which is chosen as configured by
 `pocket-reader-url-priorities'."
   (let ((prioritized-url (cl-loop for key in pocket-reader-url-priorities
-                                  when (ht-get item key) ; Gets the URL
-                                  return it)))
+                                  for url = (ht-get item key) ; Gets the URL
+                                  when (s-present? url)
+                                  return url)))
     (if first
         prioritized-url
       (if-let ((domain (pocket-reader--url-domain prioritized-url))
