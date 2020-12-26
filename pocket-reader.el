@@ -1293,7 +1293,8 @@ This is only for the elfeed-search buffer, not for entry buffers."
     (when-let ((entries (elfeed-search-selected))
                (links (mapcar #'elfeed-entry-link entries)))
       (when (pocket-lib-add-urls links)
-        (message "Added: %s" (s-join ", " links)))))
+        (message "Added: %s" (s-join ", " links))
+          (elfeed-search-untag-all-unread))))
 
   (defun pocket-reader-elfeed-entry-add-link ()
     "Add links for selected entries in elfeed-show-mode buffer to Pocket.
