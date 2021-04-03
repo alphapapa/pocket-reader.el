@@ -58,7 +58,7 @@
 ;; "U" pocket-reader-unmark-all
 ;; "o" pocket-reader-more
 ;; "l" pocket-reader-limit
-;; "r" pocket-reader-random-item
+;; "R" pocket-reader-random-item
 ;; "ta" pocket-reader-add-tags
 ;; "tr" pocket-reader-remove-tags
 ;; "tt" pocket-reader-set-tags
