@@ -76,6 +76,7 @@
 (require 'url-parse)
 (require 'seq)
 (require 'subr-x)
+(require 'text-property-search)
 (require 'thingatpt)
 
 (require 'dash)
@@ -443,7 +444,11 @@ that keystroke on a random item."
   (pocket-reader--at-marked-or-current-items
     (let ((excerpt (pocket-reader--get-property 'excerpt)))
       (unless (s-blank-str? excerpt)
-        (let* ((start-col (1+ (cl-second (pocket-reader--column-data "Title"))))
+        (let* ((start-col (save-excursion
+                            (beginning-of-line)
+                            (goto-char (prop-match-beginning
+                                        (text-property-search-forward 'tabulated-list-column-name "Title" t)))
+                            (current-column)))
                (prefix (s-repeat start-col " "))
                (width (- (window-text-width) start-col))
                (left-margin start-col)
@@ -1173,39 +1178,10 @@ and compare them with `string='."
 (defun pocket-reader--set-column-face (column face)
   "Apply FACE to COLUMN on current line.
 COLUMN may be the column name or number."
-  (-let* (((num start _end width) (pocket-reader--column-data column))
-          ;; Convert column positions to buffer positions
-          (start (+ (line-beginning-position) start))
-          (end (+ start width (1- num)))
-          ;; If the last column of the last item is empty or shorter
-          ;; than the column width, this will probably give an
-          ;; args-out-of-range error, so don't try to go past the end
-          ;; of the buffer.
-          (end (min end (point-max))))
-    (pocket-reader--with-pocket-reader-buffer
-      (add-face-text-property start end face t))))
-
-(defun pocket-reader--column-data (column)
-  "Return data about COLUMN.
-COLUMN may be a number or the heading string.
-
-Returns list with these values:
-
-- Column number (if COLUMN is a string)
-- Start column (column on each line that COLUMN starts at)
-- End column (column on each line that COLUMN stops at)
-- Column width (in characters)"
-  (let* ((col-num (cl-typecase column
-                    (integer column)
-                    (string (tabulated-list--column-number column))))
-         (col-data (aref tabulated-list-format col-num))
-         (start-col (1+ (cl-loop for i from 0 below col-num
-                                 for col-data = (aref tabulated-list-format i)
-                                 for col-width = (elt col-data 1)
-                                 sum col-width)))
-         (column-width (elt col-data 1))
-         (end-col (+ start-col column-width)))
-    (list col-num start-col end-col column-width)))
+  (pocket-reader--with-pocket-reader-buffer
+    (save-excursion
+      (-when-let (match (text-property-search-forward 'tabulated-list-column-name column t))
+        (add-face-text-property (prop-match-beginning match) (prop-match-end match) face t)))))
 
 ;;;;; URL-adding helpers
 
