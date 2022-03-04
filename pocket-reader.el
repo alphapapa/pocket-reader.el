@@ -76,7 +76,6 @@
 (require 'url-parse)
 (require 'seq)
 (require 'subr-x)
-(require 'text-property-search)
 (require 'thingatpt)
 
 (require 'dash)
@@ -438,6 +437,19 @@ that keystroke on a random item."
                while (not (pocket-reader--item-visible-p))
                finally do (funcall fn)))))
 
+(defun pocket-reader--column-beginning (column)
+  "Return the position of the beginning of the column named COLUMN, in the current line.
+
+Return nil if not found."
+  (save-excursion
+    (beginning-of-line)
+    (let ((prop 'tabulated-list-column-name)
+          (end (line-end-position)))
+      (while (and (< (point) end)
+                  (not (equal (get-text-property (point) prop) column)))
+        (goto-char (next-single-property-change (point) prop nil end)))
+      (and (< (point) end) (point)))))
+
 (defun pocket-reader-excerpt ()
   "Show excerpt for marked or current items."
   (interactive)
@@ -445,9 +457,7 @@ that keystroke on a random item."
     (let ((excerpt (pocket-reader--get-property 'excerpt)))
       (unless (s-blank-str? excerpt)
         (let* ((start-col (save-excursion
-                            (beginning-of-line)
-                            (goto-char (prop-match-beginning
-                                        (text-property-search-forward 'tabulated-list-column-name "Title" t)))
+                            (goto-char (pocket-reader--column-beginning "Title"))
                             (current-column)))
                (prefix (s-repeat start-col " "))
                (width (- (window-text-width) start-col))
@@ -1179,9 +1189,12 @@ and compare them with `string='."
   "Apply FACE to COLUMN on current line.
 COLUMN may be the column name or number."
   (pocket-reader--with-pocket-reader-buffer
-    (save-excursion
-      (-when-let (match (text-property-search-forward 'tabulated-list-column-name column t))
-        (add-face-text-property (prop-match-beginning match) (prop-match-end match) face t)))))
+    (-when-let* ((start (pocket-reader--column-beginning column))
+                 (end (next-single-char-property-change start
+                                                        'tabulated-list-column-name
+                                                        nil
+                                                        (line-end-position))))
+      (add-face-text-property start end face t))))
 
 ;;;;; URL-adding helpers
 
