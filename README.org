@@ -93,7 +93,7 @@ Commands operate on the current item or marked items.  These keys can be used in
 -  =ta=: Add tags.
 -  =tr=: Remove tags.
 -  =tt=: Set tags.
--  =ts=: Search for a tag.
+-  =ts=: Search for a tag, or select =_untagged_= for items with no tags.
 
 *** Searching
 
@@ -117,6 +117,9 @@ These special keywords can be used when searching:
 
 -  Use ~completing-read~ for selecting tags.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 -  Command ~pocket-reader-add-link~ also checks the clipboard for a link to add.
+-  ~pocket-reader-tag-search~ (bound to ~ts~) completion now supports
+   the ~_untagged_~ pseudo-tag, which lists items that have no tags.
+   (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 
 *** 0.2.1
 
