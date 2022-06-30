@@ -1319,10 +1319,13 @@ This is only for the elfeed-entry buffer, not for search buffers."
 (defun pocket-reader-generic-add-link ()
   "Try to add URL at point to Pocket using `thing-at-pt'."
   (interactive)
-  (if-let ((url (thing-at-point-url-at-point)))
+  (if-let ((url (or (thing-at-point-url-at-point)
+                    (with-temp-buffer
+                      (insert (gui-get-selection))
+                      (thing-at-point-url-at-point)))))
       (when (pocket-lib-add-urls url)
         (message "Added: %s" url))
-    (message "No URL found at point.")))
+    (user-error "No URL found at point or in clipboard")))
 
 
 ;;;; Footer

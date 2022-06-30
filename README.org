@@ -120,6 +120,7 @@ These special keywords can be used when searching:
 **** Additions
 
 -  Use ~completing-read~ for selecting tags.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
+-  Command ~pocket-reader-add-link~ also checks the clipboard for a link to add.
 
 *** 0.2.1
 
