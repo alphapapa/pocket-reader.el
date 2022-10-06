@@ -1,9 +1,5 @@
 #+PROPERTY: LOGGING nil
 
-#+BEGIN_HTML
-<a href=https://alphapapa.github.io/dont-tread-on-emacs/><img src="dont-tread-on-emacs-150.png" align="right"></a>
-#+END_HTML
-
 * pocket-reader
 
 [[https://melpa.org/#/pocket-reader][file:https://melpa.org/packages/pocket-reader-badge.svg]] [[https://stable.melpa.org/#/pocket-reader][file:https://stable.melpa.org/packages/pocket-reader-badge.svg]]
