@@ -1321,7 +1321,7 @@ This is only for the elfeed-entry buffer, not for search buffers."
   (interactive)
   (if-let ((url (or (thing-at-point-url-at-point)
                     (with-temp-buffer
-                      (insert (gui-get-selection))
+                      (insert (current-kill 0))
                       (thing-at-point-url-at-point)))))
       (when (pocket-lib-add-urls url)
         (message "Added: %s" url))
