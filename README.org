@@ -121,6 +121,10 @@ These special keywords can be used when searching:
    the ~_untagged_~ pseudo-tag, which lists items that have no tags.
    (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 
+**** Changes
+
+-  Use ~current-kill~ instead of ~gui-get-selection~.  ([[https://github.com/alphapapa/pocket-reader.el/pull/44][#44]].  Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
+
 *** 0.2.1
 
 **** Fixes
