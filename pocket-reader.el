@@ -524,7 +524,7 @@ other special keywords."
   ;; MAYBE: Maybe add support for special keywords, but that might
   ;; make it more complicated to use than it is worth, because it
   ;; would mean making every plain word an implied tag keyword.
-  (interactive (list (completing-read "Tag: " (pocket-reader--all-tags))))
+  (interactive (list (completing-read "Tag: " (cons "_untagged_" (pocket-reader--all-tags)))))
   (unless (= 1 (length (s-split (rx (or "," space)) tag)))
     (user-error "Only one tag may be searched for at a time."))
   (let ((query (concat ":t:" tag)))
