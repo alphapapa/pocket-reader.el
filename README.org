@@ -118,6 +118,7 @@ These special keywords can be used when searching:
 - Use ~completing-read~ for selecting tags.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 - Command ~pocket-reader-add-link~ also checks the clipboard for a link to add.
 - ~pocket-reader-tag-search~ (bound to ~ts~) completion now supports the ~_untagged_~ pseudo-tag, which lists items that have no tags.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
+- Command ~pocket-reader-elfeed-search-add-link~ also marks links as read in Elfeed.  ([[https://github.com/alphapapa/pocket-reader.el/pull/27][#27]], [[https://github.com/alphapapa/pocket-reader.el/pull/29][#29]].  Thanks to [[https://github.com/mssdvd][Davide Masserut]].)
 
 **** Changes
 
