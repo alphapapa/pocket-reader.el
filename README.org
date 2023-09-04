@@ -111,7 +111,7 @@ These special keywords can be used when searching:
 :TOC:      ignore-children
 :END:
 
-*** 0.3-pre
+*** 0.3
 
 **** Additions
 
