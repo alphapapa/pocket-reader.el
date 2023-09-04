@@ -123,6 +123,10 @@ These special keywords can be used when searching:
 
 - Use ~current-kill~ instead of ~gui-get-selection~.  ([[https://github.com/alphapapa/pocket-reader.el/pull/44][#44]].  Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 
+**** Fixes
+
+- Fontification of columns.  ([[https://github.com/alphapapa/pocket-reader.el/issues/36][#36]], [[https://github.com/alphapapa/pocket-reader.el/pull/40][#40]].  Thanks to [[https://github.com/oantolin][Omar Antolín Camarena]] for reporting, and to [[https://github.com/bcc32][Aaron Zeng]] for fixing.)
+
 *** 0.2.1
 
 **** Fixes
