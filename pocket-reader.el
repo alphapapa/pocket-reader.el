@@ -6,7 +6,7 @@
 ;; Created: 2017-09-25
 ;; Version: 0.3-pre
 ;; Keywords: pocket
-;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (kv "0.0.19") (pocket-lib "0.1") (s "1.10") (ov "1.0.6") (rainbow-identifiers "0.2.2") (org-web-tools "0.1") (ht "2.2"))
+;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (kv "0.0.19") (peg "1.0.1") (pocket-lib "0.1") (s "1.10") (ov "1.0.6") (rainbow-identifiers "0.2.2") (org-web-tools "0.1") (ht "2.2"))
 ;; URL: https://github.com/alphapapa/pocket-reader.el
 
 ;; This file is NOT part of GNU Emacs.
@@ -82,6 +82,7 @@
 (require 'kv)
 (require 'ht)
 (require 'ov)
+(require 'peg)
 (require 's)
 (require 'rainbow-identifiers)
 
@@ -540,8 +541,6 @@ other special keywords."
   ;; make it more complicated to use than it is worth, because it
   ;; would mean making every plain word an implied tag keyword.
   (interactive (list (completing-read "Tag: " (cons "_untagged_" (pocket-reader--all-tags)))))
-  (unless (= 1 (length (s-split (rx (or "," space)) tag)))
-    (user-error "Only one tag may be searched for at a time."))
   (let ((query (concat ":t:" tag)))
     (pocket-reader-search query)))
 
@@ -787,6 +786,37 @@ Items should be a list of items as returned by
   (when (string= "*pocket-reader*" (buffer-name))
     (run-hooks 'pocket-reader-finalize-hook)))
 
+(defun pocket-reader--parse-query (query)
+  "Return plist representing parsed QUERY string."
+  (let (parsed)
+    (with-temp-buffer
+      (insert query)
+      (goto-char (point-min))
+      (with-peg-rules
+          ((query (+ term))
+           (term (and (opt (* [blank]))
+                      (or favorite archive unread all count tag plain-term)))
+           (favorite (or ":*" ":favorite")
+                     `(_ -- (setf (plist-get parsed :favorite) t)))
+           (archive ":archive"
+                    `(_ -- (setf (plist-get parsed :archive) t)))
+           (unread ":unread"
+                   `(_ -- (setf (plist-get parsed :unread) t)))
+           (all ":all"
+                `(_ -- (setf (plist-get parsed :all) t)))
+           (count ":" (substring (+ [0-9]))
+                  `(num -- (setf (plist-get parsed :count) (string-to-number num))))
+           (tag (and (or ":t:" "t:") (or quoted-tag unquoted-tag)))
+           (quoted-tag (and "\"" (substring (+ word (opt (* [blank])))) "\"")
+                       `(tag -- (setf (plist-get parsed :tag) tag)))
+           (unquoted-tag (substring word)
+                         `(tag -- (setf (plist-get parsed :tag) tag)))
+           (word (+ (or "_" (syntax-class word))))
+           (plain-term (substring word)
+                       `(word -- (push word (plist-get parsed :words)))))
+        (peg-run (peg query))))
+    parsed))
+
 (defun pocket-reader--get-items (&optional query)
   "Return Pocket items for QUERY.
 QUERY is a string which may contain certain keywords:
@@ -799,19 +829,24 @@ QUERY is a string which may contain certain keywords:
 :t:TAG, t:TAG  Return items with TAG (only one tag may be searched for)."
   ;; NOTE: ht version
   (let* ((query (or query ""))
-         ;; Parse query
-         (query-words (s-split " " query))
-         (state (pocket-reader--keywords-in-list query-words ":archive" ":all" ":unread"))
-         (favorite (when (pocket-reader--keywords-in-list query-words ":favorite" ":*") 1))
-         (count (setq pocket-reader-show-count
-                      (or (--when-let (pocket-reader--regexp-in-list query-words (rx bos ":" (1+ digit) eos))
-                            (string-to-number it))
-                          pocket-reader-show-count)))
-         (tag (pocket-reader--regexp-in-list query-words
-                                             (rx bos (optional ":") "t:" (1+ (not space)) eos)
-                                             (rx (optional ":") "t:")))
-         (query-string (s-join " " query-words))
-         ;; Get items with query
+         (parsed (pocket-reader--parse-query query))
+         (states (remq nil
+                       (list (when (plist-get parsed :archive)
+                               "archive")
+                             (when (plist-get parsed :all)
+                               "all")
+                             (when (plist-get parsed :unread)
+                               "unread"))))
+         (state (progn
+                  (when states
+                    (unless (= 1 (length states))
+                      (user-error "Only one of :archive, :all, or :unread may be used")))
+                  (car states)))
+         (favorite (when (plist-get parsed :favorite)
+                     1))
+         (count (setq pocket-reader-show-count (or (plist-get parsed :count) pocket-reader-show-count)))
+         (tag (plist-get parsed :tag))
+         (query-string (s-join " " (plist-get parsed :words)))
          (items (cdr (cl-third (pocket-lib-get :detail-type "complete" :count count :offset pocket-reader-offset
                                  :search query-string :state state :favorite favorite :tag tag)))))
     (when (> (length items) 0)
