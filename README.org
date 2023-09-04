@@ -115,15 +115,13 @@ These special keywords can be used when searching:
 
 **** Additions
 
--  Use ~completing-read~ for selecting tags.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
--  Command ~pocket-reader-add-link~ also checks the clipboard for a link to add.
--  ~pocket-reader-tag-search~ (bound to ~ts~) completion now supports
-   the ~_untagged_~ pseudo-tag, which lists items that have no tags.
-   (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
+- Use ~completing-read~ for selecting tags.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
+- Command ~pocket-reader-add-link~ also checks the clipboard for a link to add.
+- ~pocket-reader-tag-search~ (bound to ~ts~) completion now supports the ~_untagged_~ pseudo-tag, which lists items that have no tags.  (Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 
 **** Changes
 
--  Use ~current-kill~ instead of ~gui-get-selection~.  ([[https://github.com/alphapapa/pocket-reader.el/pull/44][#44]].  Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
+- Use ~current-kill~ instead of ~gui-get-selection~.  ([[https://github.com/alphapapa/pocket-reader.el/pull/44][#44]].  Thanks to [[https://github.com/bcc32][Aaron Zeng]].)
 
 *** 0.2.1
 
