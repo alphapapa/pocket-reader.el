@@ -115,6 +115,7 @@ These special keywords can be used when searching:
 
 *Changes*
 
++ Use internal implementation of per-site foreground color selection (rather than depending on ~rainbow-identifiers~).
 + Require ~pocket-lib~ v0.3-pre, which uses [[https://github.com/alphapapa/plz.el][plz]] for HTTP.
 
 *** 0.3

@@ -6,7 +6,7 @@
 ;; Created: 2017-09-25
 ;; Version: 0.4-pre
 ;; Keywords: pocket
-;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (kv "0.0.19") (peg "1.0.1") (pocket-lib "0.3-pre") (s "1.10") (ov "1.0.6") (rainbow-identifiers "0.2.2") (org-web-tools "0.1") (ht "2.2"))
+;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (kv "0.0.19") (peg "1.0.1") (pocket-lib "0.3-pre") (s "1.10") (ov "1.0.6") (org-web-tools "0.1") (ht "2.2"))
 ;; URL: https://github.com/alphapapa/pocket-reader.el
 
 ;; This file is NOT part of GNU Emacs.
@@ -73,6 +73,7 @@
 ;;;; Requirements
 
 (require 'cl-lib)
+(require 'color)
 (require 'url-parse)
 (require 'seq)
 (require 'subr-x)
@@ -84,7 +85,6 @@
 (require 'ov)
 (require 'peg)
 (require 's)
-(require 'rainbow-identifiers)
 
 (require 'org-web-tools)
 (require 'pocket-lib)
@@ -1213,8 +1213,7 @@ and compare them with `string='."
   "Apply colored face to site column for current entry."
   (let* ((column (tabulated-list--column-number "Site"))
          (site (elt (tabulated-list-get-entry) column))
-         (hash (rainbow-identifiers--hash-function site))
-         (face (rainbow-identifiers-cie-l*a*b*-choose-face hash)))
+         (face (list :foreground (pocket-reader--prism-color site))))
     (when pocket-reader-color-site
       (pocket-reader--set-column-face "Site" face))
     (when pocket-reader-color-title
@@ -1352,6 +1351,126 @@ This is only for the elfeed-entry buffer, not for search buffers."
         (message "Added: %s" url))
     (user-error "No URL found at point or in clipboard")))
 
+(defcustom pocket-reader-prism-minimum-contrast 6
+  "Attempt to enforce this minimum contrast ratio for user faces.
+This should be a reasonable number from, e.g. 0-7 or so."
+  ;; Prot would almost approve of this default.  :) I would go all the way
+  ;; to 7, but 6 already significantly dilutes the colors in some cases.
+  :type 'number)
+
+(cl-defun pocket-reader--prism-color
+    (string &key (contrast-with (face-background 'default nil 'default)))
+  "Return a computed color for STRING.
+The color is adjusted to have sufficient contrast with the color
+CONTRAST-WITH (by default, the default face's background)."
+  ;; Copied from `ement--prism-color'.
+  (cl-labels ((relative-luminance (rgb)
+                ;; Copy of `modus-themes-wcag-formula', an elegant
+                ;; implementation by Protesilaos Stavrou.  Also see
+                ;; <https://en.wikipedia.org/wiki/Relative_luminance> and
+                ;; <https://www.w3.org/TR/WCAG20/#relativeluminancedef>.
+                (cl-loop for k in '(0.2126 0.7152 0.0722)
+                         for x in rgb
+                         sum (* k (if (<= x 0.03928)
+                                      (/ x 12.92)
+                                    (expt (/ (+ x 0.055) 1.055) 2.4)))))
+              (contrast-ratio (a b)
+                ;; Copy of `modus-themes-contrast'; see above.
+                (let ((ct (/ (+ (relative-luminance a) 0.05)
+                             (+ (relative-luminance b) 0.05))))
+                  (max ct (/ ct))))
+              (increase-contrast (color against target toward)
+                (let ((gradient (cdr (color-gradient color toward 20)))
+                      new-color)
+                  (cl-loop do (setf new-color (pop gradient))
+                           while new-color
+                           until (>= (contrast-ratio new-color against) target)
+                           ;; Avoid infinite loop in case of weirdness
+                           ;; by returning color as a fallback.
+                           finally return (or new-color color)))))
+    (let* ((id string)
+           (id-hash (float (abs (sxhash id))))
+           (ratio (/ id-hash (float most-positive-fixnum)))
+           (color-num (round (* (* 255 255 255) ratio)))
+           (color-rgb (list (/ (float (logand color-num 255)) 255)
+                            (/ (float (ash (logand color-num 65280) -8)) 255)
+                            (/ (float (ash (logand color-num 16711680) -16)) 255)))
+           (contrast-with-rgb (color-name-to-rgb contrast-with)))
+      (when (< (contrast-ratio color-rgb contrast-with-rgb) pocket-reader-prism-minimum-contrast)
+        (setf color-rgb (increase-contrast
+                         color-rgb contrast-with-rgb pocket-reader-prism-minimum-contrast
+                         (color-name-to-rgb
+                          ;; Ideally we would use the foreground color,
+                          ;; but in some themes, like Solarized Dark,
+                          ;; the foreground color's contrast is too low
+                          ;; to be effective as the value to increase
+                          ;; contrast against, so we use white or black.
+                          (pcase contrast-with
+                            ((or `nil "unspecified-bg")
+                             ;; The `contrast-with' color (i.e. the
+                             ;; default background color) is nil.  This
+                             ;; probably means that we're displaying on
+                             ;; a TTY.
+                             (if (fboundp 'frame--current-backround-mode)
+                                 ;; This function can tell us whether
+                                 ;; the background color is dark or
+                                 ;; light, but it was added in Emacs
+                                 ;; 28.1.
+                                 (pcase (frame--current-backround-mode (selected-frame))
+                                   ('dark "white")
+                                   ('light "black"))
+                               ;; Pre-28.1: Since faces' colors may be
+                               ;; "unspecified" on TTY frames, in which
+                               ;; case we have nothing to compare with, we
+                               ;; assume that the background color of such
+                               ;; a frame is black and increase contrast
+                               ;; toward white.
+                               "white"))
+                            (_
+                             ;; The `contrast-with` color is usable: test it.
+                             (if (pocket-reader--color-dark-p (color-name-to-rgb contrast-with))
+                                 "white" "black")))))))
+      (apply #'color-rgb-to-hex (append color-rgb (list 2))))))
+
+;;;;; Emacs 28 color features.
+
+;; Copied from Emacs 28.  See <https://github.com/alphapapa/ement.el/issues/99>.
+
+;; TODO(future): Remove these workarounds when dropping support for Emacs <28.
+
+(eval-and-compile
+  (unless (boundp 'color-luminance-dark-limit)
+    (defconst pocket-reader--color-luminance-dark-limit 0.325
+      "The relative luminance below which a color is considered \"dark.\"
+A \"dark\" color in this sense provides better contrast with
+white than with black; see `color-dark-p'.  This value was
+determined experimentally.")))
+
+(defalias 'pocket-reader--color-dark-p
+  (if (fboundp 'color-dark-p)
+      'color-dark-p
+    (with-suppressed-warnings ((free-vars pocket-reader--color-luminance-dark-limit))
+      (lambda (rgb)
+        "Whether RGB is more readable against white than black.
+RGB is a 3-element list (R G B), each component in the range [0,1].
+This predicate can be used both for determining a suitable (black or white)
+contrast colour with RGB as background and as foreground."
+        (unless (<= 0 (apply #'min rgb) (apply #'max rgb) 1)
+          (error "RGB components %S not in [0,1]" rgb))
+        ;; Compute the relative luminance after gamma-correcting (assuming sRGB),
+        ;; and compare to a cut-off value determined experimentally.
+        ;; See https://en.wikipedia.org/wiki/Relative_luminance for details.
+        (let* ((sr (nth 0 rgb))
+               (sg (nth 1 rgb))
+               (sb (nth 2 rgb))
+               ;; Gamma-correct the RGB components to linear values.
+               ;; Use the power 2.2 as an approximation to sRGB gamma;
+               ;; it should be good enough for the purpose of this function.
+               (r (expt sr 2.2))
+               (g (expt sg 2.2))
+               (b (expt sb 2.2))
+               (y (+ (* r 0.2126) (* g 0.7152) (* b 0.0722))))
+          (< y pocket-reader--color-luminance-dark-limit))))))
 
 ;;;; Footer
 
