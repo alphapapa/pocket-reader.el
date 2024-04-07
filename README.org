@@ -111,6 +111,10 @@ These special keywords can be used when searching:
 :TOC:      ignore-children
 :END:
 
+*** v0.4-pre
+
+Nothing new yet.
+
 *** 0.3
 
 **** Additions
