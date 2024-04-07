@@ -113,7 +113,9 @@ These special keywords can be used when searching:
 
 *** v0.4-pre
 
-Nothing new yet.
+*Changes*
+
++ Require ~pocket-lib~ v0.3-pre, which uses [[https://github.com/alphapapa/plz.el][plz]] for HTTP.
 
 *** 0.3
 

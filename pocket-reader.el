@@ -6,7 +6,7 @@
 ;; Created: 2017-09-25
 ;; Version: 0.4-pre
 ;; Keywords: pocket
-;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (kv "0.0.19") (peg "1.0.1") (pocket-lib "0.1") (s "1.10") (ov "1.0.6") (rainbow-identifiers "0.2.2") (org-web-tools "0.1") (ht "2.2"))
+;; Package-Requires: ((emacs "25.1") (dash "2.13.0") (kv "0.0.19") (peg "1.0.1") (pocket-lib "0.3-pre") (s "1.10") (ov "1.0.6") (rainbow-identifiers "0.2.2") (org-web-tools "0.1") (ht "2.2"))
 ;; URL: https://github.com/alphapapa/pocket-reader.el
 
 ;; This file is NOT part of GNU Emacs.
