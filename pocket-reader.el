@@ -847,8 +847,8 @@ QUERY is a string which may contain certain keywords:
          (count (setq pocket-reader-show-count (or (plist-get parsed :count) pocket-reader-show-count)))
          (tag (plist-get parsed :tag))
          (query-string (s-join " " (plist-get parsed :words)))
-         (items (cdr (cl-third (pocket-lib-get :detail-type "complete" :count count :offset pocket-reader-offset
-                                 :search query-string :state state :favorite favorite :tag tag)))))
+         (items (alist-get 'list (pocket-lib-get :detail-type "complete" :count count :offset pocket-reader-offset
+                                   :search query-string :state state :favorite favorite :tag tag))))
     (when (> (length items) 0)
       ;; Empty results return an empty vector, which evaluates non-nil, which isn't useful, so in that case we return nil instead.
       items)))

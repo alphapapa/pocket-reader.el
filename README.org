@@ -118,6 +118,10 @@ These special keywords can be used when searching:
 + Use internal implementation of per-site foreground color selection (rather than depending on ~rainbow-identifiers~).
 + Require ~pocket-lib~ v0.3-pre, which uses [[https://github.com/alphapapa/plz.el][plz]] for HTTP.
 
+*Fixes*
+
++ Use correct JSON key when reading responses.  ([[https://github.com/alphapapa/pocket-reader.el/issues/53][#53]].  Thanks to [[https://github.com/christofdamian][Christof Damian]] and [[https://github.com/radixm46][radixm46]] for reporting.)
+
 *** 0.3
 
 **** Additions
