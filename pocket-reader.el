@@ -672,22 +672,27 @@ If FIRST is non-nil, return the first URL found, not the best
 one.  ITEM should be a hash-table with the appropriate keys, one
 of which is chosen as configured by
 `pocket-reader-url-priorities'."
-  (let ((prioritized-url (cl-loop for key in pocket-reader-url-priorities
-                                  for url = (ht-get item key) ; Gets the URL
-                                  when (s-present? url)
-                                  return url)))
-    (if first
-        prioritized-url
-      (if-let ((domain (pocket-reader--url-domain prioritized-url))
-               (key (cl-loop for (key . vals) in pocket-reader-domain-url-type-map
-                             when (member domain vals)
-                             return key))
-               (domain-preferred-url (ht-get item key)))
-          ;; Return domain-specific URL type
-          domain-preferred-url
-        ;; Return standard, prioritized URL type
-        (or prioritized-url
-            (error "No URL for item: %s" item))))))
+  (or (when-let ((prioritized-url
+                  (cl-loop for key in pocket-reader-url-priorities
+                           for url = (ht-get item key) ; Gets the URL
+                           when (s-present? url)
+                           return url)))
+        (if first
+            prioritized-url
+          (if-let ((domain (pocket-reader--url-domain prioritized-url))
+                   (key (cl-loop for (key . vals) in pocket-reader-domain-url-type-map
+                                 when (member domain vals)
+                                 return key))
+                   (domain-preferred-url (ht-get item key)))
+              domain-preferred-url
+            prioritized-url)))
+      (display-warning 'pocket-reader (format "No URLs found for item: %S." item))
+      ;; HACK: Several places call this function, all of which expect
+      ;; a URL.  It seems like a bug on Pocket's end that some items
+      ;; can be missing URLs (nowadays; it wasn't a problem in the
+      ;; past), so rather than return nil or signal an error here, we
+      ;; return a URL that can at least point to the problem.
+      "https://example.com/?error=item-had-no-URL"))
 
 (defun pocket-reader--item-visible-p ()
   "Return non-nil if current item is visible (i.e. not hidden by an overlay)."
