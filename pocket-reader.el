@@ -686,13 +686,14 @@ of which is chosen as configured by
                    (domain-preferred-url (ht-get item key)))
               domain-preferred-url
             prioritized-url)))
-      (display-warning 'pocket-reader (format "No URLs found for item: %S." item))
-      ;; HACK: Several places call this function, all of which expect
-      ;; a URL.  It seems like a bug on Pocket's end that some items
-      ;; can be missing URLs (nowadays; it wasn't a problem in the
-      ;; past), so rather than return nil or signal an error here, we
-      ;; return a URL that can at least point to the problem.
-      "https://example.com/?error=item-had-no-URL"))
+      (progn
+        (display-warning 'pocket-reader (format "No URLs found for item: %S." item))
+        ;; HACK: Several places call this function, all of which expect
+        ;; a URL.  It seems like a bug on Pocket's end that some items
+        ;; can be missing URLs (nowadays; it wasn't a problem in the
+        ;; past), so rather than return nil or signal an error here, we
+        ;; return a URL that can at least point to the problem.
+        "https://example.com/?error=item-had-no-URL")))
 
 (defun pocket-reader--item-visible-p ()
   "Return non-nil if current item is visible (i.e. not hidden by an overlay)."
